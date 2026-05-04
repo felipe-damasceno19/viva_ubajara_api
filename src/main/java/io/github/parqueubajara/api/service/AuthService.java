@@ -78,7 +78,7 @@ public class AuthService {
                     String finalUsername = baseUsername;
 
                     if(userService.existsByUsername(finalUsername)){
-                        finalUsername = baseUsername + UUID.randomUUID().toString();
+                        finalUsername = baseUsername + "_" + UUID.randomUUID().toString().substring(0, 8);
                     }
 
                     newUser.setUsername(finalUsername);
