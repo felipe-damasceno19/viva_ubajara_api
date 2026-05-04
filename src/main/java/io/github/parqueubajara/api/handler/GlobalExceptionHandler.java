@@ -84,4 +84,13 @@ public class GlobalExceptionHandler {
                                   request.getRequestURI())
                 );
     }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<StandardError> handleAccessDenied(Exception ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Acesso negado", "Você não tem permissão para esta ação", request.getRequestURI())
+        );
+    }
 }

@@ -1,5 +1,8 @@
 package io.github.parqueubajara.api.config;
 
+import io.github.parqueubajara.api.handler.CustomAccessDeniedHandler;
+import io.github.parqueubajara.api.handler.CustomAuthenticationEntryPoint;
+import io.github.parqueubajara.api.handler.SocialLoginFailureHandler;
 import io.github.parqueubajara.api.security.CustomAuthenticationProvider;
 import io.github.parqueubajara.api.security.JwtFilter;
 import io.github.parqueubajara.api.security.SocialLoginSuccessHandler;
@@ -16,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -30,6 +34,9 @@ public class SecurityConfig {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
     private final SocialLoginSuccessHandler successHandler;
+    private final SocialLoginFailureHandler failureHandler;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
@@ -39,6 +46,14 @@ public class SecurityConfig {
                 .formLogin(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler)
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(
@@ -59,8 +74,6 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 ->
-                        oauth2.successHandler(successHandler))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
