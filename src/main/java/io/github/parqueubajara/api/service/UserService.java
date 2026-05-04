@@ -48,6 +48,15 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário e/ou senha incorretos!"));
     }
 
+    @Transactional(readOnly = true)
+    public Optional<SystemUser> findByEmailOptional(String email){
+        return repository.findByEmail(email);
+    }
+
+    public boolean existsByUsername(String username){
+        return repository.existsByUsername(username);
+    }
+
     @Transactional
     public SystemUser save(SystemUser user){
         if(repository.existsByEmail(user.getEmail())){

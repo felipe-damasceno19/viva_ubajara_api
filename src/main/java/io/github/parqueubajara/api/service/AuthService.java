@@ -13,6 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +63,29 @@ public class AuthService {
         String token = jwtService.generateToken(userDetails);
 
         return new AuthResponseDTO(token, user.getEmail(), user.getUserRole().name());
+    }
+
+    @Transactional
+    public SystemUser processSocialLogin(String email, String firstName, String lastName){
+        return userService.findByEmailOptional(email)
+                .orElseGet(() -> {
+                    SystemUser newUser = new SystemUser();
+                    newUser.setFirstName(firstName);
+                    newUser.setLastName(lastName);
+                    newUser.setEmail(email);
+
+                    String baseUsername = email.split("@")[0];
+                    String finalUsername = baseUsername;
+
+                    if(userService.existsByUsername(finalUsername)){
+                        finalUsername = baseUsername + UUID.randomUUID().toString();
+                    }
+
+                    newUser.setUsername(finalUsername);
+                    newUser.setPassword(encoder.encode(UUID.randomUUID().toString()));
+                    newUser.setUserRole(Role.USER);
+
+                    return userService.save(newUser);
+                });
     }
 }
