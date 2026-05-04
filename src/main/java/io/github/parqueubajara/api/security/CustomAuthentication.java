@@ -17,6 +17,7 @@ public class CustomAuthentication implements Authentication {
 
     private final SystemUser user;
     private boolean authenticated = true;
+    private Object details;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -38,7 +39,11 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public Object getDetails() {
-        return user;
+        return this.details;
+    }
+
+    public void setDetails(Object details){
+        this.details = details;
     }
 
     @Override
