@@ -2,12 +2,14 @@ package io.github.parqueubajara.api.config;
 
 import io.github.parqueubajara.api.security.CustomAuthenticationProvider;
 import io.github.parqueubajara.api.security.JwtFilter;
+import io.github.parqueubajara.api.security.SocialLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,14 +29,14 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
+    private final SocialLoginSuccessHandler successHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                //.formLogin(Customizer.withDefaults())
-                //.oauth2Login(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
@@ -57,6 +59,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth2 ->
+                        oauth2.successHandler(successHandler))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
