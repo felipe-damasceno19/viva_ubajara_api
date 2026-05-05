@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_attraction")
@@ -30,5 +32,8 @@ public class Attraction extends TouristSpot {
     @Enumerated(EnumType.STRING)
     @Column(name = "attraction_type", nullable = false)
     private AttractionType category;
+
+    @OneToMany(mappedBy = "attraction", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Photo> photos = new ArrayList<>();
 
 }

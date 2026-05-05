@@ -1,11 +1,11 @@
 package io.github.parqueubajara.api.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_restaurant")
@@ -27,4 +27,7 @@ public class Restaurant extends TouristSpot {
 
     @Column(name = "accepts_reservation")
     private Boolean acceptsReservation;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Photo> photos = new ArrayList<>();
 }

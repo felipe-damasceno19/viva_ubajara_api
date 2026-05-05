@@ -3,6 +3,8 @@ package io.github.parqueubajara.api.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -38,5 +40,8 @@ public class Airport extends BaseEntity {
 
     @Column(name = "route_description")
     private String routeDescription;
+
+    @OneToMany(mappedBy = "airport", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Photo> photos = new ArrayList<>();
 
 }
