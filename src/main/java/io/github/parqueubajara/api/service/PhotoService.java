@@ -120,7 +120,7 @@ public class PhotoService {
         photo.setStorageKey(storageKey);
         photo.setDescription(description);
         photo.setDisplayOrder(displayOrder);
-        photo.setAttraction(attraction);
+        photo.setTouristSpot(attraction);
 
         repository.save(photo);
         return mapper.toResponseDTO(photo);
@@ -140,7 +140,7 @@ public class PhotoService {
         photo.setStorageKey(storageKey);
         photo.setDescription(description);
         photo.setDisplayOrder(displayOrder);
-        photo.setHostPoint(hostPoint);
+        photo.setTouristSpot(hostPoint);
 
         repository.save(photo);
         return mapper.toResponseDTO(photo);
@@ -160,7 +160,7 @@ public class PhotoService {
         photo.setStorageKey(storageKey);
         photo.setDescription(description);
         photo.setDisplayOrder(displayOrder);
-        photo.setRestaurant(restaurant);
+        photo.setTouristSpot(restaurant);
 
         repository.save(photo);
         return mapper.toResponseDTO(photo);

@@ -30,6 +30,4 @@ public class HostPoint extends TouristSpot{
     @Column(name = "host_type", nullable = false)
     private HostType hostType;
 
-    @OneToMany(mappedBy = "hostPoint", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Photo> photos = new ArrayList<>();
 }

@@ -46,19 +46,8 @@ public class Photo extends BaseEntity {
     private TourGuide tourGuide;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "airport_id")
     private Airport airport;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attraction_id")
-    private Attraction attraction;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "host_point_id")
-    private HostPoint hostPoint;
 
 }

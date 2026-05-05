@@ -2,7 +2,7 @@ package io.github.parqueubajara.api.mapper;
 
 import io.github.parqueubajara.api.config.CentralMapperConfig;
 import io.github.parqueubajara.api.dto.response.PhotoResponseDTO;
-import io.github.parqueubajara.api.model.Photo;
+import io.github.parqueubajara.api.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -19,22 +19,23 @@ public interface PhotoMapper {
     default UUID resolveOwnerId(Photo photo) {
         if (photo.getEvent() != null) return photo.getEvent().getId();
         if (photo.getTouristSpot() != null) return photo.getTouristSpot().getId();
-        if (photo.getRestaurant() != null) return photo.getRestaurant().getId();
-        if (photo.getAirport() != null) return photo.getAirport().getId();
-        if (photo.getAttraction() != null) return photo.getAttraction().getId();
-        if (photo.getHostPoint() != null) return photo.getHostPoint().getId();
         if (photo.getTourGuide() != null) return photo.getTourGuide().getId();
+        if (photo.getAirport() != null) return photo.getAirport().getId();
         return null;
     }
 
     default String resolveOwnerType(Photo photo) {
         if (photo.getEvent() != null) return "EVENT";
-        if (photo.getTouristSpot() != null) return "TOURIST_SPOT";
-        if (photo.getRestaurant() != null) return "RESTAURANT";
-        if (photo.getAirport() != null) return "AIRPORT";
-        if (photo.getAttraction() != null) return "ATTRACTION";
-        if (photo.getHostPoint() != null) return "HOST_POINT";
         if (photo.getTourGuide() != null) return "TOUR_GUIDE";
+        if (photo.getAirport() != null) return "AIRPORT";
+        if (photo.getTouristSpot() != null) {
+            TouristSpot spot = photo.getTouristSpot();
+            if (spot instanceof HostPoint) return "HOST_POINT";
+            if (spot instanceof Attraction) return "ATTRACTION";
+            if (spot instanceof Restaurant) return "RESTAURANT";
+            return "TOURIST_SPOT";
+        }
+
         return null;
     }
 }

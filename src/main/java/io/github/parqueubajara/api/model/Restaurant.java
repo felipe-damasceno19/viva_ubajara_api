@@ -28,6 +28,4 @@ public class Restaurant extends TouristSpot {
     @Column(name = "accepts_reservation")
     private Boolean acceptsReservation;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Photo> photos = new ArrayList<>();
 }

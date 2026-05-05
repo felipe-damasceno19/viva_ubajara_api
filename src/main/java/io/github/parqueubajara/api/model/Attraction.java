@@ -33,7 +33,4 @@ public class Attraction extends TouristSpot {
     @Column(name = "attraction_type", nullable = false)
     private AttractionType category;
 
-    @OneToMany(mappedBy = "attraction", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Photo> photos = new ArrayList<>();
-
 }
