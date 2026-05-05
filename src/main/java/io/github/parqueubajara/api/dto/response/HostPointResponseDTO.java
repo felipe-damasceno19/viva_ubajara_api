@@ -4,6 +4,7 @@ import io.github.parqueubajara.api.model.enums.HostType;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public record HostPointResponseDTO(
@@ -19,6 +20,7 @@ public record HostPointResponseDTO(
         HostType hostType,
         Integer numOfRooms,
         BigDecimal avgPrice,
-        String bookingUrl
+        String bookingUrl,
+        List<PhotoResponseDTO> photos
 ) {
 }

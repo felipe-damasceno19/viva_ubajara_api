@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -36,6 +36,8 @@ server:
   port: 8080
   servlet:
     context-path: /api/v1
+    session:
+      persistent: false
 
 jwt:
   secret: ${JWT_SECRET}

@@ -7,7 +7,6 @@ import io.github.parqueubajara.api.dto.update.EventUpdateDTO;
 import io.github.parqueubajara.api.model.Event;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 // Adicionamos o "uses" para ele enxergar como converter as fotos

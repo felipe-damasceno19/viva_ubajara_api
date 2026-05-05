@@ -1,10 +1,12 @@
 package io.github.parqueubajara.api.controller;
 
 import io.github.parqueubajara.api.dto.request.TouristSpotRequestDTO;
+import io.github.parqueubajara.api.dto.response.PhotoResponseDTO;
 import io.github.parqueubajara.api.dto.response.TouristSpotResponseDTO;
 import io.github.parqueubajara.api.dto.update.TouristSpotUpdateDTO;
 import io.github.parqueubajara.api.mapper.TouristSpotMapper;
 import io.github.parqueubajara.api.model.TouristSpot;
+import io.github.parqueubajara.api.service.PhotoService;
 import io.github.parqueubajara.api.service.TouristSpotService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -15,7 +17,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +30,7 @@ public class TouristSpotController {
 
     private final TouristSpotService service;
     private final TouristSpotMapper mapper;
+    private final PhotoService photoService;
 
     @GetMapping("/{id}")
     public ResponseEntity<TouristSpotResponseDTO> getById(@PathVariable UUID id){
@@ -49,6 +54,20 @@ public class TouristSpotController {
         TouristSpotResponseDTO responseDTO = mapper.toResponseDTO(spot);
         
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @PostMapping("/{id}/photos")
+    public ResponseEntity<PhotoResponseDTO> uploadPhoto(
+            @PathVariable UUID id,
+            @RequestPart("file") MultipartFile file,
+            @RequestPart(value = "description", required = false) String description,
+            @RequestPart(value = "displayOrder", required = false) String displayOrder
+    ) throws IOException {
+        PhotoResponseDTO response = photoService.uploadForTouristSpot(
+                id, file, description,
+                displayOrder != null ? Integer.parseInt(displayOrder) : null
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")

@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.dto.response;
 
+import java.util.List;
 import java.util.UUID;
 
 public record AirportResponseDTO(
@@ -8,6 +9,7 @@ public record AirportResponseDTO(
         String city,
         Double distanceKm,
         Integer estimatedTimeMinutes,
-        String routeDescription
+        String routeDescription,
+        List<PhotoResponseDTO> photos
 ) {
 }

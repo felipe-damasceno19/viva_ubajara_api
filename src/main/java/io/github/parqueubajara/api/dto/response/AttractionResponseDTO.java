@@ -3,6 +3,7 @@ package io.github.parqueubajara.api.dto.response;
 import io.github.parqueubajara.api.model.enums.AttractionType;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public record AttractionResponseDTO(
@@ -19,6 +20,7 @@ public record AttractionResponseDTO(
         BigDecimal entryPrice,
         Boolean hasGuide,
         Integer averageVisitDuration,
-        AttractionType category
+        AttractionType category,
+        List<PhotoResponseDTO> photos
 ) {
 }
