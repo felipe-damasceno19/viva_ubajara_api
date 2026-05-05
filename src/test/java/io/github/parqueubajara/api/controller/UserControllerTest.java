@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class UserControllerIT {
+class UserControllerIT extends BaseController{
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,9 +28,11 @@ class UserControllerIT {
     // Usando o endpoint de registro para popular o banco para os testes de visualização
     private final String registerUserJson = """
             {
-                "name": "Admin Teste",
-                "email": "admin@parque.com",
-                "password": "senhaSegura123"
+              "firstName": "gabriel",
+              "lastName": "frota",
+              "username": "gfrota",
+              "email": "gfrota@gmail.com",
+              "password": "123456"
             }
             """;
 

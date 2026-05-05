@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class HostPointControllerIT {
+class HostPointControllerIT extends BaseController{
 
     @Autowired
     private MockMvc mockMvc;
@@ -27,9 +27,18 @@ class HostPointControllerIT {
 
     private final String validHostJson = """
             {
-                "name": "Pousada do Sereno",
-                "type": "HOTEL",
-                "address": "Rua das Flores, 123"
+              "name": "Pousada do sereno",
+              "description": "pousada",
+              "address": "Centro",
+              "phone": "(88)99662-8976",
+              "email": "pousada@gmail.com",
+              "webUrl": "pousadadosereno.com",
+              "instagramUrl": "@pousadaS",
+              "active": true,
+              "hostType": "HOTEL",
+              "numOfRooms": 10,
+              "avgPrice": 80,
+              "bookingUrl": "string"
             }
             """;
 

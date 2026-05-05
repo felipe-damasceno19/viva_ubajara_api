@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.parqueubajara.api.model.BaseEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class RestaurantControllerIT {
+class RestaurantControllerIT extends BaseController {
 
     @Autowired
     private MockMvc mockMvc;
@@ -27,9 +28,17 @@ class RestaurantControllerIT {
 
     private final String validRestaurantJson = """
             {
-                "name": "Restaurante Mirante",
-                "description": "Comida regional com vista",
-                "address": "Estrada do Teleferico, s/n"
+              "name": "Fogazza",
+              "description": "Restaurante de comida italiana",
+              "address": "rua da cachoeira",
+              "phone": "(88)98769657",
+              "email": "fogazza@gmail.com",
+              "webUrl": "fogazza.com",
+              "instagramUrl": "fogazza",
+              "active": true,
+              "cuisineType": "Italiana",
+              "openingHours": "18:00",
+              "avgPrice": 90
             }
             """;
 

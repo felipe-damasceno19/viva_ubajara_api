@@ -27,13 +27,18 @@ class AirportControllerIT {
     private ObjectMapper objectMapper;
 
     // TODO: Ajuste os campos do JSON de acordo com o seu AirportRequestDTO
+
     private final String validAirportJson = """
             {
+                "iataCode": "JJD",
                 "name": "Aeroporto de Jericoacoara",
                 "city": "Cruz",
-                "iataCode": "JJD"
+                "distanceKm": 85.0,
+                "estimatedTimeMinutes": 90,
+                "routeDescription": "Via CE-085"
             }
             """;
+
 
     private final String updateAirportJson = """
             {

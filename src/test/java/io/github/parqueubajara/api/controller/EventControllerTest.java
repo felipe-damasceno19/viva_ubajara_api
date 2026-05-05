@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class EventControllerIT {
+class EventControllerIT extends BaseController {
 
     @Autowired
     private MockMvc mockMvc;
@@ -31,7 +31,10 @@ class EventControllerIT {
                 "name": "Festival de Inverno",
                 "description": "Evento cultural de Ubajara",
                 "startDateTime": "20/07/2026 19:00:00",
-                "endDateTime": "25/07/2026 23:59:59"
+                "endDateTime": "25/07/2026 23:59:59",
+                "location": "Centro",
+                "registrationUrl": "string",
+                "active": true
             }
             """;
 

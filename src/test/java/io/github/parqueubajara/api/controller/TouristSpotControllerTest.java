@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class TouristSpotControllerIT {
+class TouristSpotControllerIT extends BaseController{
 
     @Autowired
     private MockMvc mockMvc;
@@ -27,8 +27,14 @@ class TouristSpotControllerIT {
 
     private final String validSpotJson = """
             {
-                "name": "Bondinho de Ubajara",
-                "description": "Famoso teleférico com vista panorâmica"
+              "name": "Fonte da praça",
+              "description": "fonte de água",
+              "address": "Praça do jacaré",
+              "phone": "8899772-4821",
+              "email": "",
+              "webUrl": "",
+              "instagramUrl": "",
+              "active": true
             }
             """;
 

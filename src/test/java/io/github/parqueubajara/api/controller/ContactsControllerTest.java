@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class ContactsControllerIT {
+class ContactsControllerIT extends BaseController{
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,15 +28,21 @@ class ContactsControllerIT {
     // TODO: Ajuste os campos do JSON de acordo com o seu ContactsRequestDTO
     private final String validContactJson = """
             {
-                "name": "Secretaria de Turismo",
-                "phone": "+5588999999999",
-                "email": "turismo@ubajara.ce.gov.br"
+              "name": "Policia",
+              "category": "Emergencial",
+              "phone": "190",
+              "email": "policia@gmail.com",
+              "description": "Prendem bandidos"
             }
             """;
 
     private final String updateContactJson = """
             {
-                "phone": "+5588988888888"
+              "name": "Policia Federal do Ceará",
+              "category": "Emergencial",
+              "phone": "190",
+              "email": "policia@gmail.com",
+              "description": "Prendem bandidos"
             }
             """;
 

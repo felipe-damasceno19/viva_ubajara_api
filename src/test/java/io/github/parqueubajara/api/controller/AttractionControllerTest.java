@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class AttractionControllerIT {
+class AttractionControllerIT extends BaseController{
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,15 +28,37 @@ class AttractionControllerIT {
     // TODO: Ajuste os campos do JSON de acordo com o seu AttractionRequestDTO e AttractionType
     private final String validAttractionJson = """
             {
-                "name": "Gruta de Ubajara",
-                "description": "Uma das maiores grutas do Brasil",
-                "category": "NATUREZA" 
+              "name": "Gruta",
+              "description": "do ubajara",
+              "address": "parque nacional",
+              "phone": "8898977-4241",
+              "email": "gruta@gmail.com",
+              "webUrl": "gruta.com.br",
+              "instagramUrl": "@gruta",
+              "active": true,
+              "openingHours": "06:00",
+              "entryPrice": 0,
+              "hasGuide": true,
+              "averageVisitDuration": 50,
+              "category": "PARK"
             }
             """;
 
     private final String updateAttractionJson = """
             {
-                "name": "Gruta de Ubajara Atualizada"
+              "name": "Gruta do ubajara",
+              "description": "ubajara",
+              "address": "parque ecologico do ubajara",
+              "phone": "8898977-4241",
+              "email": "gruta@gmail.com",
+              "webUrl": "gruta.com.br",
+              "instagramUrl": "@gruta",
+              "active": true,
+              "openingHours": "06:00",
+              "entryPrice": 0,
+              "hasGuide": true,
+              "averageVisitDuration": 50,
+              "category": "PARK"
             }
             """;
 

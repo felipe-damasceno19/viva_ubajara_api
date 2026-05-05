@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class AuthControllerIT {
+class AuthControllerIT extends BaseController{
 
     @Autowired
     private MockMvc mockMvc;
@@ -23,17 +23,19 @@ class AuthControllerIT {
     // TODO: Ajuste de acordo com UserRequestDTO
     private final String registerJson = """
             {
-                "name": "Turista Silva",
-                "email": "turista@email.com",
-                "password": "senhaForte123"
+              "firstName": "felipe",
+              "lastName": "levi",
+              "username": "felipe",
+              "email": "felipe@gmail.com",
+              "password": "123456"
             }
             """;
 
     // TODO: Ajuste de acordo com LoginRequestDTO
     private final String loginJson = """
             {
-                "email": "turista@email.com",
-                "password": "senhaForte123"
+                "email": "felipe@gmail.com",
+                "password": "123456"
             }
             """;
 

@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class PhotoControllerIT {
+class PhotoControllerIT extends BaseController{
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,6 +28,8 @@ class PhotoControllerIT {
     @Test
     @DisplayName("Deve realizar upload de foto e retornar 201 Created")
     void shouldUploadPhoto() throws Exception {
+        String token = getAuthToken();
+
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test.jpg",
@@ -37,8 +39,9 @@ class PhotoControllerIT {
 
         mockMvc.perform(multipart("/photos")
                         .file(file)
-                        .part((Part) new MockMultipartFile("description", "", "text/plain", "Foto da trilha".getBytes()))
-                        .part((Part) new MockMultipartFile("displayOrder", "", "text/plain", "1".getBytes()))
+                        .param("description", "Foto da trilha")
+                        .param("displayOrder", "1")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated());
     }
