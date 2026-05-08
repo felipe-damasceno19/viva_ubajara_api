@@ -18,6 +18,13 @@ aws:
   region: sa-east-1
   bucket-name: parque-ubajara-fotos
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    use-root-path: false
+  api-docs:
+    path: /v3/api-docs
+
 server:
   port: 8080
   servlet:
