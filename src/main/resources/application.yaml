@@ -2,10 +2,42 @@ spring:
   application:
     name: ubajara-api
 
+  # Configuração comum de segurança (se usar OAuth2 em ambos)
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+
+# Configurações globais que não mudam entre ambientes
+aws:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  region: sa-east-1
+  bucket-name: parque-ubajara-fotos
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+
+---
+# PERFIL DE DESENVOLVIMENTO (Local)
+spring:
+  config:
+    activate:
+      on-profile: dev
+
   datasource:
-    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5434/ubajara_db}
-    username: ${DATASOURCE_USERNAME:postgres}
-    password: ${DATASOURCE_PASSWORD:postgres}
+    url: jdbc:postgresql://localhost:5434/ubajara_db
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -17,28 +49,24 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${CLIENT_ID}
-            client-secret: ${CLIENT_SECRET}
+---
+# PERFIL DE PRODUÇÃO (Render)
+spring:
+  config:
+    activate:
+      on-profile: prod
 
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
-aws:
-  access-key: ${AWS_ACCESS_KEY}
-  secret-key: ${AWS_SECRET_KEY}
-  region: sa-east-1
-  bucket-name: parque-ubajara-fotos
-
-server:
-  port: 8080
-  servlet:
-    context-path: /api/v1
-    session:
-      persistent: false
-
-jwt:
-  secret: ${JWT_SECRET}
-  expiration: 86400000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
