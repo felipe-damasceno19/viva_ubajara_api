@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.handler;
 
 import io.github.parqueubajara.api.exception.DuplicateEmailException;
+import io.github.parqueubajara.api.exception.DuplicateRegistry;
 import io.github.parqueubajara.api.exception.InvalidFileException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
@@ -100,7 +101,16 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(
                 new StandardError(LocalDateTime.now(), status.value(),
-                        "Erro ao realizar ação", "Email já cadastrado", request.getRequestURI())
+                        "Erro ao realizar ação", ex.getMessage(), request.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(DuplicateRegistry.class)
+    public ResponseEntity<StandardError> handleDuplicateRegistry(DuplicateRegistry ex, HttpServletRequest request){
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Erro ao realizar ação", ex.getMessage() , request.getRequestURI())
         );
     }
 }

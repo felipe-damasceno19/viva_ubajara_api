@@ -20,4 +20,6 @@ public interface AirportRepository extends JpaRepository<Airport, UUID> {
     @Override
     @EntityGraph(attributePaths = {"photos"})
     Optional<Airport> findById(UUID id);
+
+    boolean existsByIataCode(String iataCode);
 }

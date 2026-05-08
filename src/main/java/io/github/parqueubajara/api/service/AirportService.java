@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.service;
 
 import io.github.parqueubajara.api.dto.update.AirportUpdateDTO;
+import io.github.parqueubajara.api.exception.DuplicateRegistry;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.AirportMapper;
 import io.github.parqueubajara.api.model.Airport;
@@ -39,6 +40,9 @@ public class AirportService {
 
     @Transactional
     public Airport save(Airport airport){
+        if (repository.existsByIataCode(airport.getIataCode())) {
+            throw new DuplicateRegistry("Aeroporto de codigo IATA: "+airport.getIataCode()+" já registrado");
+        }
         return repository.save(airport);
     }
 
