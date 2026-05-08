@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,6 +47,7 @@ public class AirportController implements GenericController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AirportResponseDTO> save(@RequestBody @Valid AirportRequestDTO requestDTO){
         Airport airport = mapper.toEntity(requestDTO);
         service.save(airport);
@@ -55,6 +57,7 @@ public class AirportController implements GenericController {
     }
 
     @PostMapping("/{id}/photos")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PhotoResponseDTO> uploadPhoto(
             @PathVariable UUID id,
             @RequestPart("file") MultipartFile file,
@@ -68,13 +71,14 @@ public class AirportController implements GenericController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Void> udpdate(@PathVariable UUID id, @RequestBody AirportUpdateDTO updateDTO){
         service.update(id, updateDTO);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
         service.delete(id);

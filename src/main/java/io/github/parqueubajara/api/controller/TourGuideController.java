@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,6 +47,7 @@ public class TourGuideController implements GenericController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TourGuideResponseDTO> save(@RequestBody @Valid TourGuideRequestDTO requestDTO){
         TourGuide guide = mapper.toEntity(requestDTO);
         service.save(guide);
@@ -55,6 +57,7 @@ public class TourGuideController implements GenericController {
     }
 
     @PostMapping("/{id}/photos")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PhotoResponseDTO> uploadPhoto(
             @PathVariable UUID id,
             @RequestPart("file") MultipartFile file,
@@ -69,12 +72,14 @@ public class TourGuideController implements GenericController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody TourGuideUpdateDTO updateDTO){
         service.update(id, updateDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
         service.delete(id);
         return ResponseEntity.noContent().build();

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,6 +48,7 @@ public class TouristSpotController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TouristSpotResponseDTO> save(
             @RequestBody @Valid TouristSpotRequestDTO requestDTO){
         TouristSpot spot = mapper.toEntity(requestDTO);
@@ -57,6 +59,7 @@ public class TouristSpotController {
     }
 
     @PostMapping("/{id}/photos")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PhotoResponseDTO> uploadPhoto(
             @PathVariable UUID id,
             @RequestPart("file") MultipartFile file,
@@ -71,6 +74,7 @@ public class TouristSpotController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody TouristSpotUpdateDTO updateDTO){
         TouristSpot spot = service.findById(id);
         service.update(id, updateDTO);
@@ -78,6 +82,7 @@ public class TouristSpotController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
         service.delete(id);
         return ResponseEntity.noContent().build();

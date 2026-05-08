@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,6 +47,7 @@ public class RestaurantController implements GenericController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RestaurantResponseDTO> save(@RequestBody @Valid RestaurantRequestDTO requestDTO){
         Restaurant restaurant = mapper.toEntity(requestDTO);
         service.save(restaurant);
@@ -55,6 +57,7 @@ public class RestaurantController implements GenericController {
     }
 
     @PostMapping("/{id}/photos")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PhotoResponseDTO> uploadPhoto(
             @PathVariable UUID id,
             @RequestPart("file") MultipartFile file,
@@ -70,12 +73,14 @@ public class RestaurantController implements GenericController {
 
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody RestaurantUpdateDTO updateDTO){
         service.update(id, updateDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
         service.delete(id);
         return ResponseEntity.noContent().build();
