@@ -41,6 +41,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Grant execute permission to mvnw
+        run: chmod +x mvnw
+
       - name: Build and run tests
         env:
           DATASOURCE_URL: jdbc:postgresql://localhost:5432/ubajara_db
@@ -59,4 +62,3 @@ jobs:
         with:
           name: test-results
           path: target/surefire-reports/
-
