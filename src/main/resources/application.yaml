@@ -2,7 +2,7 @@ spring:
   application:
     name: ubajara-api
 
-  # Configuração comum de segurança (se usar OAuth2 em ambos)
+  # Configuração comum de segurança
   security:
     oauth2:
       client:
@@ -50,7 +50,7 @@ spring:
         format_sql: true
 
 ---
-# PERFIL DE PRODUÇÃO (Render)
+# PERFIL DE PRODUÇÃO 
 spring:
   config:
     activate:
