@@ -52,6 +52,8 @@ public class PhotoService {
                 .toList();
     }
 
+    // Upload methods
+
     @Transactional
     public PhotoResponseDTO upload(MultipartFile file, String description,
                                     Integer displayOrder) throws IOException {
