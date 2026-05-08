@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.service;
 
 import io.github.parqueubajara.api.dto.update.UserUpdateDTO;
+import io.github.parqueubajara.api.exception.DuplicateEmailException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.UserMapper;
 import io.github.parqueubajara.api.model.SystemUser;
@@ -60,7 +61,7 @@ public class UserService {
     @Transactional
     public SystemUser save(SystemUser user){
         if(repository.existsByEmail(user.getEmail())){
-            throw new RuntimeException("E-mail já cadastrado");
+            throw new DuplicateEmailException("E-mail já cadastrado");
         }
         return repository.save(user);
     }

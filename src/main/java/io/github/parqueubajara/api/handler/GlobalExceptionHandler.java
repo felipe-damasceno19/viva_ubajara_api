@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.handler;
 
+import io.github.parqueubajara.api.exception.DuplicateEmailException;
 import io.github.parqueubajara.api.exception.InvalidFileException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
@@ -91,6 +92,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(
                 new StandardError(LocalDateTime.now(), status.value(),
                         "Acesso negado", "Você não tem permissão para esta ação", request.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<StandardError> handleDuplicateEmail(DuplicateEmailException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Erro ao realizar ação", "Email já cadastrado", request.getRequestURI())
         );
     }
 }
