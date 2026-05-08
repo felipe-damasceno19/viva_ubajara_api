@@ -52,7 +52,7 @@ public class PhotoService {
                 .toList();
     }
 
-    // Upload methods
+    // Upload methods para cada classe
 
     @Transactional
     public PhotoResponseDTO upload(MultipartFile file, String description,
