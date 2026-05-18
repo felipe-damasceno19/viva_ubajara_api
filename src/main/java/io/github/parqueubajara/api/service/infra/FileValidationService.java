@@ -34,7 +34,8 @@ public class FileValidationService {
     }
 
     private void validateImageType(MultipartFile file){
-        if(!ALLOWED_IMAGE_TYPES.contains(file.getContentType())){
+        String contentType = file.getContentType();
+        if(contentType == null || !ALLOWED_IMAGE_TYPES.contains(contentType)){
             throw new InvalidFileException("Tipo de arquivo não permitido. Permitidos: JPEG, PNG, WEBP, GIF");
         }
     }
