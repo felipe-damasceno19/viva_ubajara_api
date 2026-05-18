@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.net.URI;
 import java.util.UUID;
 
@@ -29,8 +31,15 @@ public class UserController implements GenericController{
     private final UserMapper mapper;
 
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getMe() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        SystemUser user = service.findByEmail(email);
+        return ResponseEntity.ok(mapper.toResponseDTO(user));
+    }
+
     @GetMapping
-    public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(size = 10)Pageable pageable,
+    public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(size = 10) Pageable pageable,
                                                          @RequestParam(required = false) String username){
         Page<SystemUser> pageEntity = service.findAll(pageable, username);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
