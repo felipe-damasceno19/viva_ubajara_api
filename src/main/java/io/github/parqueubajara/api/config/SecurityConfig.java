@@ -73,6 +73,7 @@ public class SecurityConfig {
                                 "/contacts/**",
                                 "/photos/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/contact-messages").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
