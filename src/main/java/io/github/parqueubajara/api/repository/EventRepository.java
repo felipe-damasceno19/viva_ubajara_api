@@ -17,6 +17,12 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @EntityGraph(attributePaths = {"photos"})
     Page<Event> findByStartDateBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"photos"})
+    Page<Event> findByActive(Boolean active, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Page<Event> findByActiveAndStartDateBetween(Boolean active, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
     @Override
     @EntityGraph(attributePaths = {"photos"})
     Page<Event> findAll(Pageable pageable);

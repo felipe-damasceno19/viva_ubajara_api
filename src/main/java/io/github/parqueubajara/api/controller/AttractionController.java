@@ -44,9 +44,10 @@ public class AttractionController implements GenericController{
     @GetMapping()
     public ResponseEntity<Page<AttractionResponseDTO>> getAll(
             @RequestParam(required = false) AttractionType category,
-            @PageableDefault(size = 10, sort = "name")Pageable pageable){
+            @RequestParam(required = false) Boolean active,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable){
 
-        Page<Attraction> pageEntity = service.findAll(pageable, category);
+        Page<Attraction> pageEntity = service.findAll(pageable, category, active);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
     }
 

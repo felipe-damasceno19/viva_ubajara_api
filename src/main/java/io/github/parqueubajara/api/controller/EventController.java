@@ -43,10 +43,11 @@ public class EventController implements GenericController{
     }
 
     @GetMapping
-    public ResponseEntity<Page<EventResponseDTO>> getAll(@PageableDefault(size = 10)Pageable pageable,
-                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")LocalDateTime startDateTime,
-                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")LocalDateTime endDateTime){
-        Page<Event> pageEntity = service.findAll(pageable, startDateTime, endDateTime);
+    public ResponseEntity<Page<EventResponseDTO>> getAll(@PageableDefault(size = 10) Pageable pageable,
+                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") LocalDateTime startDateTime,
+                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") LocalDateTime endDateTime,
+                                                         @RequestParam(required = false) Boolean active){
+        Page<Event> pageEntity = service.findAll(pageable, startDateTime, endDateTime, active);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
     }
 

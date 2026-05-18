@@ -15,6 +15,9 @@ public interface TourGuideRepository extends JpaRepository<TourGuide, UUID> {
 
     boolean existsByEmail(String email);
 
+    @EntityGraph(attributePaths = {"photos"})
+    Page<TourGuide> findByActive(Boolean active, Pageable pageable);
+
     @Override
     @EntityGraph(attributePaths = {"photos"})
     Page<TourGuide> findAll(Pageable pageable);

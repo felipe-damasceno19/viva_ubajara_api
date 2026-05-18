@@ -28,5 +28,12 @@ public interface AttractionRepository extends JpaRepository<Attraction, UUID> {
     @EntityGraph(attributePaths = {"photos"})
     Optional<Attraction> findById(UUID id);
 
+    @EntityGraph(attributePaths = {"photos"})
     Page<Attraction> findByParentIsNull(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Page<Attraction> findByActive(Boolean active, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Page<Attraction> findByCategoryAndActive(AttractionType category, Boolean active, Pageable pageable);
 }

@@ -34,8 +34,14 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Event> findAll(Pageable pageable, LocalDateTime start, LocalDateTime end){
-        if(start != null && end != null){
+    public Page<Event> findAll(Pageable pageable, LocalDateTime start, LocalDateTime end, Boolean active){
+        if (active != null && start != null && end != null) {
+            return repository.findByActiveAndStartDateBetween(active, start, end, pageable);
+        }
+        if (active != null) {
+            return repository.findByActive(active, pageable);
+        }
+        if (start != null && end != null) {
             return repository.findByStartDateBetween(start, end, pageable);
         }
         return repository.findAll(pageable);

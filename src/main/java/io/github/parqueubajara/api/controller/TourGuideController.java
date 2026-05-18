@@ -41,8 +41,9 @@ public class TourGuideController implements GenericController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TourGuideResponseDTO>> getAll(@PageableDefault(size = 10)Pageable pageable){
-        Page<TourGuide> pageEntity = service.findAll(pageable);
+    public ResponseEntity<Page<TourGuideResponseDTO>> getAll(@PageableDefault(size = 10) Pageable pageable,
+                                                              @RequestParam(required = false) Boolean active){
+        Page<TourGuide> pageEntity = service.findAll(pageable, active);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
     }
 

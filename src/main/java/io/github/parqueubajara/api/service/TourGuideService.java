@@ -33,7 +33,10 @@ public class TourGuideService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TourGuide> findAll(Pageable pageable){
+    public Page<TourGuide> findAll(Pageable pageable, Boolean active){
+        if (active != null) {
+            return repository.findByActive(active, pageable);
+        }
         return repository.findAll(pageable);
     }
 
