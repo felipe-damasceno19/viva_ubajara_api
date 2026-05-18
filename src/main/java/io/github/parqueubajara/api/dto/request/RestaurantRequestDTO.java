@@ -26,7 +26,9 @@ public record RestaurantRequestDTO(
 
         String openingHours,
 
-        @Positive(message = "O valor informado deve ser positivo") BigDecimal avgPrice
+        @Positive(message = "O valor informado deve ser positivo") BigDecimal avgPrice,
+
+        Boolean acceptsReservation
 
 ) {
 }
