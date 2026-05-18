@@ -39,8 +39,10 @@ public class RestaurantService {
 
     @Transactional
     public Restaurant save(Restaurant restaurant){
-        if(repository.existsByEmail(restaurant.getEmail())){
-            throw new RuntimeException("E-mail já cadastrado");
+        if (restaurant.getEmail() != null && !restaurant.getEmail().trim().isEmpty()) {
+            if (repository.existsByEmail(restaurant.getEmail())) {
+                throw new RuntimeException("E-mail já cadastrado");
+            }
         }
         return repository.save(restaurant);
     }

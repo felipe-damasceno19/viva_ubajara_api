@@ -60,6 +60,18 @@ public class AttractionController implements GenericController{
         return ResponseEntity.created(location).body(mapper.toResponseDTO(attraction));
     }
 
+    @PostMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AttractionResponseDTO> addSubAttraction(
+            @PathVariable UUID id,
+            @RequestBody AttractionRequestDTO requestDTO) {
+        Attraction attraction = mapper.toEntity(requestDTO);
+        service.linkAttractions(id, attraction);
+        URI location = generateHeaderLocation(id);
+
+        return ResponseEntity.ok(mapper.toResponseDTO(attraction));
+    }
+
     @PostMapping("/{id}/photos")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PhotoResponseDTO> uploadPhoto(

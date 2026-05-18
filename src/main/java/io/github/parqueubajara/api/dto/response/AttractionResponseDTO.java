@@ -21,6 +21,7 @@ public record AttractionResponseDTO(
         Boolean hasGuide,
         Integer averageVisitDuration,
         AttractionType category,
-        List<PhotoResponseDTO> photos
+        List<PhotoResponseDTO> photos,
+        List<AttractionResponseDTO> subAttractions
 ) {
 }

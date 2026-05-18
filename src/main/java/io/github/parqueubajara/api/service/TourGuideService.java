@@ -39,8 +39,10 @@ public class TourGuideService {
 
     @Transactional
     public TourGuide save(TourGuide guide){
-        if(repository.existsByEmail(guide.getEmail())){
-            throw new RuntimeException("E-mail já cadastrado");
+        if (guide.getEmail() != null && !guide.getEmail().trim().isEmpty()){
+            if (repository.existsByEmail(guide.getEmail())) {
+                throw new RuntimeException("E-mail já cadastrado");
+            }
         }
         return repository.save(guide);
     }

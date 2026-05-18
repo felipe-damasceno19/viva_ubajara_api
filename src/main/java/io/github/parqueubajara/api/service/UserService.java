@@ -60,8 +60,10 @@ public class UserService {
 
     @Transactional
     public SystemUser save(SystemUser user){
-        if(repository.existsByEmail(user.getEmail())){
-            throw new DuplicateEmailException("E-mail já cadastrado");
+        if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
+            if (repository.existsByEmail(user.getEmail())) {
+                throw new DuplicateEmailException("E-mail já cadastrado");
+            }
         }
         return repository.save(user);
     }

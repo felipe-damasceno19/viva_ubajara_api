@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.service;
 
 import io.github.parqueubajara.api.dto.update.AttractionUpdateDTO;
+import io.github.parqueubajara.api.exception.DuplicateEmailException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.AttractionMapper;
 import io.github.parqueubajara.api.model.Attraction;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,10 +46,20 @@ public class AttractionService {
 
     @Transactional
     public Attraction save(Attraction attraction) {
-        if(repository.existsByEmail(attraction.getEmail())){
-            throw new RuntimeException("E-mail já cadastrado");
+        if(attraction.getEmail() != null && !attraction.getEmail().trim().isEmpty()) {
+            if(repository.existsByEmail(attraction.getEmail())){
+                throw new DuplicateEmailException("E-mail já cadastrado");
+            }
         }
         return repository.save(attraction);
+    }
+
+    @Transactional
+    public void linkAttractions(UUID id, Attraction attraction) {
+        Attraction foundAttraction = findById(id);
+        List<Attraction> subAttraction = new ArrayList<>();
+        subAttraction.add(attraction);
+        foundAttraction.setSubAttractions(subAttraction);
     }
 
     @Transactional

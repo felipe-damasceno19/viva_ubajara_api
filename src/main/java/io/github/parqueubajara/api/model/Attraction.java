@@ -33,4 +33,11 @@ public class Attraction extends TouristSpot {
     @Column(name = "attraction_type", nullable = false)
     private AttractionType category;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    private Attraction parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    private List<Attraction> subAttractions = new ArrayList<>();
+
 }

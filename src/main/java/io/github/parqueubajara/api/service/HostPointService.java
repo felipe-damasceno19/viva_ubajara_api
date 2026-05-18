@@ -43,8 +43,10 @@ public class HostPointService {
 
     @Transactional
     public HostPoint save(HostPoint hostPoint){
-        if(repository.existsByEmail(hostPoint.getEmail())){
-            throw new RuntimeException("E-mail já cadastrado no sistema!");
+        if(hostPoint.getEmail() != null && !hostPoint.getEmail().trim().isEmpty()) {
+            if (repository.existsByEmail(hostPoint.getEmail())) {
+                throw new RuntimeException("E-mail já cadastrado no sistema!");
+            }
         }
         return repository.save(hostPoint);
     }

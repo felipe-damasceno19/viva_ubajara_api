@@ -11,7 +11,7 @@ public record UserRequestDTO(
         @Size(min = 2, max = 20, message = "Limite máximo de 20 caracteres!")
         String firstName,
 
-        @Size(min = 2, max = 20, message = "Limite máximo de 20 caracteres!") String lastName,
+        @Size(max = 20, message = "Limite máximo de 20 caracteres!") String lastName,
 
         @NotBlank(message = "Preencha o campo de usuário")
         @Size(min = 2, max = 30, message = "Limite máximo de 20 caracteres!")

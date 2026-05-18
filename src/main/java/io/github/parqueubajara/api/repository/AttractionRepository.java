@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,4 +27,6 @@ public interface AttractionRepository extends JpaRepository<Attraction, UUID> {
     @Override
     @EntityGraph(attributePaths = {"photos"})
     Optional<Attraction> findById(UUID id);
+
+    Page<Attraction> findByParentIsNull(Pageable pageable);
 }

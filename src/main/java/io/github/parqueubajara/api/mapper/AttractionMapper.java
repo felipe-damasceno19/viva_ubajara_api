@@ -12,6 +12,7 @@ public interface AttractionMapper {
 
     @Mapping(target = "photos", ignore = true)
     Attraction toEntity(AttractionRequestDTO requestDTO);
+    @Mapping(target = "subAttractions", source = "subAttractions")
     AttractionResponseDTO toResponseDTO(Attraction entity);
 
     void updateEntityFromDto(AttractionUpdateDTO updateDTO, @MappingTarget Attraction entity);

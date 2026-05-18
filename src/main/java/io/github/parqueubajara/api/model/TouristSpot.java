@@ -49,4 +49,12 @@ public class TouristSpot extends BaseEntity{
 
     @OneToMany(mappedBy = "touristSpot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos;
+
+    @PrePersist
+    @PreUpdate
+    private void preFormat() {
+        if(this.email != null && this.email.trim().isEmpty()) {
+            this.email = null;
+        }
+    }
 }
