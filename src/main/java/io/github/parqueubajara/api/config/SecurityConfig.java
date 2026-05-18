@@ -71,9 +71,11 @@ public class SecurityConfig {
                                 "/tour-guides/**",
                                 "/airports/**",
                                 "/contacts/**",
-                                "/photos/**"
+                                "/photos/**",
+                                "/testimonials/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/contact-messages").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/testimonials").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
