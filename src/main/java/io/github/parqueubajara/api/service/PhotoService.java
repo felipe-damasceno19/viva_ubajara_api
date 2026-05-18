@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.service;
 
 import io.github.parqueubajara.api.dto.response.PhotoResponseDTO;
+import io.github.parqueubajara.api.dto.update.PhotoUpdateDTO;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.PhotoMapper;
 import io.github.parqueubajara.api.model.*;
@@ -42,6 +43,11 @@ public class PhotoService {
     public Photo findById(UUID id){
         return findByIdOptional(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Photo de ID: "+ id + " não encontrado"));
+    }
+
+    @Transactional(readOnly = true)
+    public PhotoResponseDTO findByIdDTO(UUID id) {
+        return mapper.toResponseDTO(findById(id));
     }
 
     @Transactional(readOnly = true)
@@ -204,6 +210,15 @@ public class PhotoService {
         photo.setDisplayOrder(displayOrder);
         photo.setTouristSpot(touristSpot);
 
+        repository.save(photo);
+        return mapper.toResponseDTO(photo);
+    }
+
+    @Transactional
+    public PhotoResponseDTO update(UUID id, PhotoUpdateDTO dto) {
+        Photo photo = findById(id);
+        if (dto.description() != null) photo.setDescription(dto.description());
+        if (dto.displayOrder() != null) photo.setDisplayOrder(dto.displayOrder());
         repository.save(photo);
         return mapper.toResponseDTO(photo);
     }

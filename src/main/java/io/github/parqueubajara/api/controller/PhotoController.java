@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.controller;
 
 import io.github.parqueubajara.api.dto.response.PhotoResponseDTO;
+import io.github.parqueubajara.api.dto.update.PhotoUpdateDTO;
 import io.github.parqueubajara.api.handler.StandardError;
 import io.github.parqueubajara.api.service.PhotoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +29,18 @@ import java.util.UUID;
 public class PhotoController {
 
     private final PhotoService service;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PhotoResponseDTO> getById(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.findByIdDTO(id));
+    }
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PhotoResponseDTO> update(@PathVariable UUID id,
+                                                   @RequestBody @Valid PhotoUpdateDTO updateDTO) {
+        return ResponseEntity.ok(service.update(id, updateDTO));
+    }
 
     @Operation(
             summary = "Upload de foto",

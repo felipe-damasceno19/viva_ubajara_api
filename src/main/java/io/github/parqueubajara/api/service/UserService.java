@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.service;
 
+import io.github.parqueubajara.api.dto.update.UserProfileUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserUpdateDTO;
 import io.github.parqueubajara.api.exception.DuplicateEmailException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
@@ -72,6 +73,17 @@ public class UserService {
     public void update(UUID id, UserUpdateDTO updateDTO){
         SystemUser user = findById(id);
         mapper.updateEntityFromDto(updateDTO, user);
+        repository.save(user);
+    }
+
+    @Transactional
+    public void updateSelf(String email, UserProfileUpdateDTO dto) {
+        SystemUser user = findByEmail(email);
+        if (dto.firstName() != null) user.setFirstName(dto.firstName());
+        if (dto.lastName() != null) user.setLastName(dto.lastName());
+        if (dto.username() != null) user.setUsername(dto.username());
+        if (dto.email() != null) user.setEmail(dto.email());
+        if (dto.password() != null) user.setPassword(encoder.encode(dto.password()));
         repository.save(user);
     }
 

@@ -2,6 +2,7 @@ package io.github.parqueubajara.api.controller;
 
 import io.github.parqueubajara.api.dto.request.UserRequestDTO;
 import io.github.parqueubajara.api.dto.response.UserResponseDTO;
+import io.github.parqueubajara.api.dto.update.UserProfileUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserUpdateDTO;
 import io.github.parqueubajara.api.mapper.UserMapper;
 import io.github.parqueubajara.api.model.SystemUser;
@@ -36,6 +37,13 @@ public class UserController implements GenericController{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         SystemUser user = service.findByEmail(email);
         return ResponseEntity.ok(mapper.toResponseDTO(user));
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<Void> updateMe(@RequestBody @Valid UserProfileUpdateDTO updateDTO) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        service.updateSelf(email, updateDTO);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

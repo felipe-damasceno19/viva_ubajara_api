@@ -44,7 +44,8 @@ public class TouristSpotService {
     }
 
     @Transactional(readOnly = true)
-    public Page<TouristSpot> findAll(Pageable pageable){
+    public Page<TouristSpot> findAll(Pageable pageable, Boolean active){
+        if (active != null) return repository.findByActive(active, pageable);
         return repository.findAll(pageable);
     }
 

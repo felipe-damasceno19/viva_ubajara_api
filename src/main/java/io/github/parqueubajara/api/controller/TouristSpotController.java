@@ -41,8 +41,9 @@ public class TouristSpotController {
 
     @GetMapping
     public ResponseEntity<Page<TouristSpotResponseDTO>> getAll(
-            @PageableDefault(size = 10, sort = "name")Pageable pageable) {
-        Page<TouristSpot> pageEntity = service.findAll(pageable);
+            @PageableDefault(size = 10, sort = "name") Pageable pageable,
+            @RequestParam(required = false) Boolean active) {
+        Page<TouristSpot> pageEntity = service.findAll(pageable, active);
         Page<TouristSpotResponseDTO> pageDTO = pageEntity.map(mapper::toResponseDTO);
         return ResponseEntity.ok(pageDTO);
     }

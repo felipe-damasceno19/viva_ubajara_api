@@ -19,6 +19,9 @@ public interface TouristSpotRepository extends JpaRepository<TouristSpot, UUID> 
     @EntityGraph(attributePaths = {"photos"})
     Page<TouristSpot> findAll(Pageable pageable);
 
+    @EntityGraph(attributePaths = {"photos"})
+    Page<TouristSpot> findByActive(Boolean active, Pageable pageable);
+
     @Override
     @EntityGraph(attributePaths = {"photos"})
     Optional<TouristSpot> findById(UUID id);
