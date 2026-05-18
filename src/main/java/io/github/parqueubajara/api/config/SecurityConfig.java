@@ -64,7 +64,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/tourist-spots/**",
-                                "/attractives/**",
+                                "/attractions/**",
                                 "/host-points/**",
                                 "/restaurants/**",
                                 "/events/**",
