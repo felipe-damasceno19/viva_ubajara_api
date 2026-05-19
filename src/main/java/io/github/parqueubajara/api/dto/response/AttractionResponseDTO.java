@@ -15,6 +15,7 @@ public record AttractionResponseDTO(
         String email,
         String webUrl,
         String instagramUrl,
+        String mapsUrl,
         Boolean active,
         String shortDescription,
         Boolean openToPublic,

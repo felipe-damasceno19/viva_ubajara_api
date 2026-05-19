@@ -18,6 +18,7 @@ public record RestaurantUpdateDTO(
 
         String webUrl,
         String instagramUrl,
+        String mapsUrl,
 
         Boolean active,
 

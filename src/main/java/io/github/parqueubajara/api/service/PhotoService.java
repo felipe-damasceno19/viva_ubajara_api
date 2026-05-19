@@ -5,6 +5,7 @@ import io.github.parqueubajara.api.dto.update.PhotoUpdateDTO;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.PhotoMapper;
 import io.github.parqueubajara.api.model.*;
+import io.github.parqueubajara.api.model.RecommendedItem;
 import io.github.parqueubajara.api.repository.PhotoRepository;
 import io.github.parqueubajara.api.service.infra.FileValidationService;
 import io.github.parqueubajara.api.service.infra.S3StorageService;
@@ -33,6 +34,7 @@ public class PhotoService {
     private final RestaurantService restaurantService;
     private final TourGuideService tourGuideService;
     private final TouristSpotService touristSpotService;
+    private final RecommendedItemService recommendedItemService;
 
     @Transactional(readOnly = true)
     public Optional<Photo> findByIdOptional(UUID id){
@@ -189,6 +191,26 @@ public class PhotoService {
         photo.setDescription(description);
         photo.setDisplayOrder(displayOrder);
         photo.setTourGuide(tourGuide);
+
+        repository.save(photo);
+        return mapper.toResponseDTO(photo);
+    }
+
+    public PhotoResponseDTO uploadForRecommendedItem(UUID itemId, MultipartFile file,
+                                                String description, Integer displayOrder) throws IOException {
+        validationService.validateImage(file);
+
+        RecommendedItem item = recommendedItemService.findById(itemId);
+
+        String url = storageService.upload(file);
+        String storageKey = extractStorageKey(url);
+
+        Photo photo = new Photo();
+        photo.setUrl(url);
+        photo.setStorageKey(storageKey);
+        photo.setDescription(description);
+        photo.setDisplayOrder(displayOrder);
+        photo.setTouristSpot(item);
 
         repository.save(photo);
         return mapper.toResponseDTO(photo);

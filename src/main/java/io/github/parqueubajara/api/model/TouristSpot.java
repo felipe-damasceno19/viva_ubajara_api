@@ -44,6 +44,9 @@ public class TouristSpot extends BaseEntity{
     @Column(name = "instagram_url")
     private String instagramUrl;
 
+    @Column(name = "maps_url")
+    private String mapsUrl;
+
     @Column(name = "active")
     private Boolean active;
 

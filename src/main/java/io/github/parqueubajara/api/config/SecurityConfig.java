@@ -72,7 +72,8 @@ public class SecurityConfig {
                                 "/airports/**",
                                 "/contacts/**",
                                 "/photos/**",
-                                "/testimonials/**"
+                                "/testimonials/**",
+                                "/recommended-items/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/contact-messages").permitAll()
                         .requestMatchers(HttpMethod.POST, "/testimonials").permitAll()
@@ -97,11 +98,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
-                "http://localhost:3000",  // React padrão
-                "http://localhost:5173",  // Vite padrão
-                "http://localhost:4200"   // Angular padrão
-        ));
+        config.addAllowedOriginPattern("*");
 
         config.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"

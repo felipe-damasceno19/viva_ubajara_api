@@ -16,6 +16,7 @@ public record HostPointResponseDTO(
         String email,
         String webUrl,
         String instagramUrl,
+        String mapsUrl,
         Boolean active,
         HostType hostType,
         Integer numOfRooms,

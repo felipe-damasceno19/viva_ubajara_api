@@ -19,6 +19,7 @@ public record HostPointUpdateDTO(
 
         String webUrl,
         String instagramUrl,
+        String mapsUrl,
 
         Boolean active,
 

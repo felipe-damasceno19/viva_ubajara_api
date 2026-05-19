@@ -15,6 +15,7 @@ public record AttractionUpdateDTO(
 
         String webUrl,
         String instagramUrl,
+        String mapsUrl,
         Boolean active,
 
         //Atributos da classe

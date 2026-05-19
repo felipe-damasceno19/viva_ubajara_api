@@ -18,6 +18,7 @@ public record RestaurantRequestDTO(
 
         String webUrl,
         String instagramUrl,
+        String mapsUrl,
 
         @NotNull(message = "O status ativo deve ser informado") Boolean active,
 
