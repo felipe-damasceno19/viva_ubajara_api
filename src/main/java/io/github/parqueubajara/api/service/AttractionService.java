@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,15 +37,15 @@ public class AttractionService {
     @Transactional(readOnly = true)
     public Page<Attraction> findAll(Pageable pageable, AttractionType category, Boolean active){
         if (category != null && active != null) {
-            return repository.findByCategoryAndActive(category, active, pageable);
+            return repository.findByParentIsNullAndCategoryAndActive(category, active, pageable);
         }
         if (category != null) {
-            return repository.findByCategory(category, pageable);
+            return repository.findByParentIsNullAndCategory(category, pageable);
         }
         if (active != null) {
-            return repository.findByActive(active, pageable);
+            return repository.findByParentIsNullAndActive(active, pageable);
         }
-        return repository.findAll(pageable);
+        return repository.findByParentIsNull(pageable);
     }
 
     @Transactional
@@ -61,10 +59,15 @@ public class AttractionService {
     }
 
     @Transactional
-    public void linkAttractions(UUID parentId, UUID subAttractionId) {
+    public Attraction addSubAttraction(UUID parentId, Attraction child) {
         Attraction parent = findById(parentId);
-        Attraction sub = findById(subAttractionId);
-        sub.setParent(parent);
+        child.setParent(parent);
+        if (child.getEmail() != null && !child.getEmail().trim().isEmpty()) {
+            if (repository.existsByEmail(child.getEmail())) {
+                throw new DuplicateEmailException("E-mail já cadastrado");
+            }
+        }
+        return repository.save(child);
     }
 
     @Transactional

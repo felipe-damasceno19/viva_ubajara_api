@@ -4,7 +4,8 @@ package io.github.parqueubajara.api.model.enums;
 public enum Role {
 
     ADMIN("admin"),
-    USER("user");
+    USER("user"),
+    GUIDE("guide");
 
     private final String valor;
 

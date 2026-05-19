@@ -25,11 +25,20 @@ public interface AttractionRepository extends JpaRepository<Attraction, UUID> {
     Page<Attraction> findAll(Pageable pageable);
 
     @Override
-    @EntityGraph(attributePaths = {"photos"})
+    @EntityGraph(attributePaths = {"photos", "subAttractions", "subAttractions.photos"})
     Optional<Attraction> findById(UUID id);
 
     @EntityGraph(attributePaths = {"photos"})
     Page<Attraction> findByParentIsNull(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Page<Attraction> findByParentIsNullAndActive(Boolean active, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Page<Attraction> findByParentIsNullAndCategory(AttractionType category, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Page<Attraction> findByParentIsNullAndCategoryAndActive(AttractionType category, Boolean active, Pageable pageable);
 
     @EntityGraph(attributePaths = {"photos"})
     Page<Attraction> findByActive(Boolean active, Pageable pageable);

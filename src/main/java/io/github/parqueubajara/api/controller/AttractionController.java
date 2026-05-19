@@ -52,7 +52,7 @@ public class AttractionController implements GenericController{
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<AttractionResponseDTO> save(@RequestBody @Valid AttractionRequestDTO requestDTO){
         Attraction attraction = mapper.toEntity(requestDTO);
         service.save(attraction);
@@ -61,18 +61,19 @@ public class AttractionController implements GenericController{
         return ResponseEntity.created(location).body(mapper.toResponseDTO(attraction));
     }
 
-    @PostMapping("/{id}/sub-attractions/{subId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/sub-attractions")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<AttractionResponseDTO> addSubAttraction(
             @PathVariable UUID id,
-            @PathVariable UUID subId) {
-        service.linkAttractions(id, subId);
-
-        return ResponseEntity.noContent().build();
+            @RequestBody AttractionRequestDTO requestDTO) {
+        Attraction child = mapper.toEntity(requestDTO);
+        Attraction saved = service.addSubAttraction(id, child);
+        URI location = generateHeaderLocation(saved.getId());
+        return ResponseEntity.created(location).body(mapper.toResponseDTO(saved));
     }
 
     @PostMapping("/{id}/photos")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<PhotoResponseDTO> uploadPhoto(
             @PathVariable UUID id,
             @RequestPart("file") MultipartFile file,
@@ -88,15 +89,14 @@ public class AttractionController implements GenericController{
 
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody AttractionUpdateDTO updateDTO){
-        Attraction attraction = service.findById(id);
         service.update(id, updateDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
         service.delete(id);
         return ResponseEntity.noContent().build();

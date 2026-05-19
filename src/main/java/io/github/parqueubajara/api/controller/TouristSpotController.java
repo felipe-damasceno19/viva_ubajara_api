@@ -49,7 +49,7 @@ public class TouristSpotController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<TouristSpotResponseDTO> save(
             @RequestBody @Valid TouristSpotRequestDTO requestDTO){
         TouristSpot spot = mapper.toEntity(requestDTO);
@@ -60,7 +60,7 @@ public class TouristSpotController {
     }
 
     @PostMapping("/{id}/photos")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<PhotoResponseDTO> uploadPhoto(
             @PathVariable UUID id,
             @RequestPart("file") MultipartFile file,
@@ -75,7 +75,7 @@ public class TouristSpotController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody TouristSpotUpdateDTO updateDTO){
         TouristSpot spot = service.findById(id);
         service.update(id, updateDTO);
@@ -83,7 +83,7 @@ public class TouristSpotController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
         service.delete(id);
         return ResponseEntity.noContent().build();

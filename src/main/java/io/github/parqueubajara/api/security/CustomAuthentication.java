@@ -29,6 +29,13 @@ public class CustomAuthentication implements Authentication {
             );
         }
 
+        if (user.getUserRole() == Role.GUIDE) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_GUIDE"),
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+        }
+
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 

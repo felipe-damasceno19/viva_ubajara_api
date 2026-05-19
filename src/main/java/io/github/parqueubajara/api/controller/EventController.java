@@ -52,7 +52,7 @@ public class EventController implements GenericController{
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<EventResponseDTO> save(@RequestBody @Valid EventRequestDTO requestDTO){
         Event event = mapper.toEntity(requestDTO);
         service.save(event);
@@ -62,7 +62,7 @@ public class EventController implements GenericController{
     }
 
     @PostMapping("/{id}/photos")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<PhotoResponseDTO> uploadPhoto(
             @PathVariable UUID id,
             @RequestPart("file") MultipartFile file,
@@ -77,14 +77,14 @@ public class EventController implements GenericController{
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody EventUpdateDTO updateDTO){
         service.update(id, updateDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
         service.delete(id);
         return ResponseEntity.noContent().build();
