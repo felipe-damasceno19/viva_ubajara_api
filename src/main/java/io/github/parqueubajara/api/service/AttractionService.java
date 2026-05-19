@@ -61,11 +61,10 @@ public class AttractionService {
     }
 
     @Transactional
-    public void linkAttractions(UUID id, Attraction attraction) {
-        Attraction foundAttraction = findById(id);
-        List<Attraction> subAttraction = new ArrayList<>();
-        subAttraction.add(attraction);
-        foundAttraction.setSubAttractions(subAttraction);
+    public void linkAttractions(UUID parentId, UUID subAttractionId) {
+        Attraction parent = findById(parentId);
+        Attraction sub = findById(subAttractionId);
+        sub.setParent(parent);
     }
 
     @Transactional

@@ -7,6 +7,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_attraction")
@@ -42,11 +43,15 @@ public class Attraction extends TouristSpot {
     @Column(name = "attraction_type", nullable = false)
     private AttractionType category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private Attraction parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Attraction> subAttractions = new ArrayList<>();
+
+    public void linkSubAttractions(Attraction attraction) {
+        subAttractions.add(attraction);
+    }
 
 }

@@ -61,16 +61,14 @@ public class AttractionController implements GenericController{
         return ResponseEntity.created(location).body(mapper.toResponseDTO(attraction));
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{id}/sub-attractions/{subId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AttractionResponseDTO> addSubAttraction(
             @PathVariable UUID id,
-            @RequestBody AttractionRequestDTO requestDTO) {
-        Attraction attraction = mapper.toEntity(requestDTO);
-        service.linkAttractions(id, attraction);
-        URI location = generateHeaderLocation(id);
+            @PathVariable UUID subId) {
+        service.linkAttractions(id, subId);
 
-        return ResponseEntity.ok(mapper.toResponseDTO(attraction));
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/photos")

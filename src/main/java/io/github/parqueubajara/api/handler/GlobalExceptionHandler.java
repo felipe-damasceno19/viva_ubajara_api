@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.io.IOException;
@@ -117,10 +119,31 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseEntity<StandardError> handleAuth(InternalAuthenticationServiceException ex, HttpServletRequest request){
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        HttpStatus status = HttpStatus.FORBIDDEN;
         return ResponseEntity.status(status).body(
                 new StandardError(LocalDateTime.now(), status.value()
                         , "Erro ao realizar ação", "Usuário e/ou senha incorretos", request.getRequestURI())
         );
     }
+
+    @ExceptionHandler(MissingPathVariableException.class)
+    public ResponseEntity<StandardError> handlePathVariable(MissingPathVariableException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Erro ao realizar ação", "Erro! Parâmetros faltando", request.getRequestURI()
+                )
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<StandardError> handleParameter (MissingPathVariableException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Erro ao realizar ação", "Erro! Parametros vazios ou incorretos", request.getRequestURI()
+                )
+        );
+    }
+
 }
