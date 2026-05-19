@@ -10,6 +10,7 @@ public record UserResponseDTO(
         String lastName,
         String username,
         String email,
-        Role role
+        Role role,
+        String photoUrl
 ) {
 }

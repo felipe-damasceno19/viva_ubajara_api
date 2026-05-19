@@ -47,6 +47,9 @@ public class SystemUser {
     @Column(name = "user_role", nullable = false, length = 20)
     private Role userRole;
 
+    @Column(name = "user_photo_url", length = 500)
+    private String photoUrl;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createDate;

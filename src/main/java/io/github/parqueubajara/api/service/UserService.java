@@ -7,13 +7,17 @@ import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.UserMapper;
 import io.github.parqueubajara.api.model.SystemUser;
 import io.github.parqueubajara.api.repository.UserRepository;
+import io.github.parqueubajara.api.service.infra.FileValidationService;
+import io.github.parqueubajara.api.service.infra.S3StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +28,8 @@ public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
     private final PasswordEncoder encoder;
+    private final S3StorageService storageService;
+    private final FileValidationService validationService;
 
     @Transactional(readOnly = true)
     public Optional<SystemUser> findByIdOptional(UUID id){
@@ -93,5 +99,15 @@ public class UserService {
         repository.delete(user);
     }
 
+    @Transactional
+    public String uploadPhoto(String email, MultipartFile file) throws IOException {
+        validationService.validateImage(file);
+        SystemUser user = findByEmail(email);
+        String storageKey = storageService.upload(file);
+        String photoUrl = storageService.generateUrl(storageKey);
+        user.setPhotoUrl(photoUrl);
+        repository.save(user);
+        return photoUrl;
+    }
 
 }

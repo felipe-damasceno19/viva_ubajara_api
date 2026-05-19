@@ -16,10 +16,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -44,6 +47,15 @@ public class UserController implements GenericController{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         service.updateSelf(email, updateDTO);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/me/photo")
+    public ResponseEntity<Map<String, String>> uploadPhoto(
+            @RequestPart("file") MultipartFile file
+    ) throws IOException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String photoUrl = service.uploadPhoto(email, file);
+        return ResponseEntity.ok(Map.of("photoUrl", photoUrl));
     }
 
     @GetMapping
