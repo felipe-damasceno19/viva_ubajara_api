@@ -174,6 +174,7 @@ public class PhotoService {
     private Photo buildPhoto(String storageKey, String description, Integer displayOrder) {
         Photo photo = new Photo();
         photo.setStorageKey(storageKey);
+        photo.setUrl(storageService.generateUrl(storageKey));
         photo.setDescription(description);
         photo.setDisplayOrder(displayOrder);
         return photo;
