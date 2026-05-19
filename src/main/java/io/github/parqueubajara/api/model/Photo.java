@@ -20,10 +20,7 @@ public class Photo extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID id;
-
-    @Column(name = "url", nullable = false)
-    private String url;
-
+    
     @Column(name = "storage_key")
     private String storageKey;
 
