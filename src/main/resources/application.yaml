@@ -22,6 +22,7 @@ aws:
   secret-key: ${AWS_SECRET_KEY}
   region: sa-east-1
   bucket-name: parque-ubajara-fotos
+  cloudfront-url: ${CLOUDFRONT_URL}
 
 springdoc:
   swagger-ui:
