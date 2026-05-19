@@ -37,203 +37,117 @@ public class PhotoService {
     private final RecommendedItemService recommendedItemService;
 
     @Transactional(readOnly = true)
-    public Optional<Photo> findByIdOptional(UUID id){
+    public Optional<Photo> findByIdOptional(UUID id) {
         return repository.findById(id);
     }
 
     @Transactional(readOnly = true)
-    public Photo findById(UUID id){
+    public Photo findById(UUID id) {
         return findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Photo de ID: "+ id + " não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Photo de ID: " + id + " não encontrado"));
     }
 
     @Transactional(readOnly = true)
     public PhotoResponseDTO findByIdDTO(UUID id) {
-        return mapper.toResponseDTO(findById(id));
+        return mapper.toResponseDTO(findById(id), storageService);
     }
 
     @Transactional(readOnly = true)
-    public List<PhotoResponseDTO> findAll(){
+    public List<PhotoResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
-                .map(mapper::toResponseDTO)
+                .map(photo -> mapper.toResponseDTO(photo, storageService))
                 .toList();
     }
 
-    // Upload methods para cada classe
-
     @Transactional
     public PhotoResponseDTO upload(MultipartFile file, String description,
-                                    Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = instantiatePhotoTemplate(description, url, storageKey, displayOrder);
+                                   Integer displayOrder) throws IOException {
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
         repository.save(photo);
-
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
+    @Transactional
     public PhotoResponseDTO uploadForEvent(UUID eventId, MultipartFile file,
                                            String description, Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        Event event = eventService.findById(eventId);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = new Photo();
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDescription(description);
-        photo.setDisplayOrder(displayOrder);
-        photo.setEvent(event);
-
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
+        photo.setEvent(eventService.findById(eventId));
         repository.save(photo);
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
+    @Transactional
     public PhotoResponseDTO uploadForAirport(UUID airportId, MultipartFile file,
-                                           String description, Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        Airport airport = airportService.findById(airportId);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = new Photo();
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDescription(description);
-        photo.setDisplayOrder(displayOrder);
-        photo.setAirport(airport);
-
-        repository.save(photo);
-        return mapper.toResponseDTO(photo);
-    }
-
-    public PhotoResponseDTO uploadForAttraction(UUID attractionId, MultipartFile file,
                                              String description, Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        Attraction attraction = attractionService.findById(attractionId);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = new Photo();
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDescription(description);
-        photo.setDisplayOrder(displayOrder);
-        photo.setTouristSpot(attraction);
-
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
+        photo.setAirport(airportService.findById(airportId));
         repository.save(photo);
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
-    public PhotoResponseDTO uploadForHostPoint(UUID hostPointId, MultipartFile file,
+    @Transactional
+    public PhotoResponseDTO uploadForAttraction(UUID attractionId, MultipartFile file,
                                                 String description, Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        HostPoint hostPoint = hostPointService.findById(hostPointId);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = new Photo();
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDescription(description);
-        photo.setDisplayOrder(displayOrder);
-        photo.setTouristSpot(hostPoint);
-
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
+        photo.setTouristSpot(attractionService.findById(attractionId));
         repository.save(photo);
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
+    @Transactional
+    public PhotoResponseDTO uploadForHostPoint(UUID hostPointId, MultipartFile file,
+                                               String description, Integer displayOrder) throws IOException {
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
+        photo.setTouristSpot(hostPointService.findById(hostPointId));
+        repository.save(photo);
+        return mapper.toResponseDTO(photo, storageService);
+    }
+
+    @Transactional
     public PhotoResponseDTO uploadForRestaurant(UUID restaurantId, MultipartFile file,
                                                 String description, Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        Restaurant restaurant = restaurantService.findById(restaurantId);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = new Photo();
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDescription(description);
-        photo.setDisplayOrder(displayOrder);
-        photo.setTouristSpot(restaurant);
-
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
+        photo.setTouristSpot(restaurantService.findById(restaurantId));
         repository.save(photo);
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
+    @Transactional
     public PhotoResponseDTO uploadForTourGuide(UUID tourGuideId, MultipartFile file,
-                                                String description, Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        TourGuide tourGuide = tourGuideService.findById(tourGuideId);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = new Photo();
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDescription(description);
-        photo.setDisplayOrder(displayOrder);
-        photo.setTourGuide(tourGuide);
-
+                                               String description, Integer displayOrder) throws IOException {
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
+        photo.setTourGuide(tourGuideService.findById(tourGuideId));
         repository.save(photo);
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
+    @Transactional
     public PhotoResponseDTO uploadForRecommendedItem(UUID itemId, MultipartFile file,
-                                                String description, Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        RecommendedItem item = recommendedItemService.findById(itemId);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = new Photo();
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDescription(description);
-        photo.setDisplayOrder(displayOrder);
-        photo.setTouristSpot(item);
-
+                                                     String description, Integer displayOrder) throws IOException {
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
+        photo.setTouristSpot(recommendedItemService.findById(itemId));
         repository.save(photo);
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
+    @Transactional
     public PhotoResponseDTO uploadForTouristSpot(UUID touristSpotId, MultipartFile file,
-                                                String description, Integer displayOrder) throws IOException {
-        validationService.validateImage(file);
-
-        TouristSpot touristSpot = touristSpotService.findById(touristSpotId);
-
-        String url = storageService.upload(file);
-        String storageKey = extractStorageKey(url);
-
-        Photo photo = new Photo();
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDescription(description);
-        photo.setDisplayOrder(displayOrder);
-        photo.setTouristSpot(touristSpot);
-
+                                                 String description, Integer displayOrder) throws IOException {
+        String storageKey = uploadAndValidate(file);
+        Photo photo = buildPhoto(storageKey, description, displayOrder);
+        photo.setTouristSpot(touristSpotService.findById(touristSpotId));
         repository.save(photo);
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
     @Transactional
@@ -242,29 +156,26 @@ public class PhotoService {
         if (dto.description() != null) photo.setDescription(dto.description());
         if (dto.displayOrder() != null) photo.setDisplayOrder(dto.displayOrder());
         repository.save(photo);
-        return mapper.toResponseDTO(photo);
+        return mapper.toResponseDTO(photo, storageService);
     }
 
     @Transactional
-    public void delete(UUID id){
+    public void delete(UUID id) {
         Photo photo = findById(id);
         storageService.delete(photo.getStorageKey());
         repository.delete(photo);
     }
 
-    private Photo instantiatePhotoTemplate(String description, String url
-            , String storageKey, Integer displayOrder){
-        Photo photo = new Photo();
-        photo.setDescription(description);
-        photo.setUrl(url);
-        photo.setStorageKey(storageKey);
-        photo.setDisplayOrder(displayOrder);
+    private String uploadAndValidate(MultipartFile file) throws IOException {
+        validationService.validateImage(file);
+        return storageService.upload(file);
+    }
 
+    private Photo buildPhoto(String storageKey, String description, Integer displayOrder) {
+        Photo photo = new Photo();
+        photo.setStorageKey(storageKey);
+        photo.setDescription(description);
+        photo.setDisplayOrder(displayOrder);
         return photo;
     }
-
-    private String extractStorageKey(String url) {
-        return url.substring(url.lastIndexOf("/") + 1);
-    }
-
 }

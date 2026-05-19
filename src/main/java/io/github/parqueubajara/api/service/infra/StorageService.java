@@ -7,4 +7,5 @@ import java.io.IOException;
 public interface StorageService {
     String upload(MultipartFile file) throws IOException;
     void delete(String storageKey);
+    String generateUrl(String storageKey);
 }

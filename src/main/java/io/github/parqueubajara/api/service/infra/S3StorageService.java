@@ -22,6 +22,9 @@ public class S3StorageService implements StorageService {
     @Value("${aws.bucket-name}")
     private String bucketName;
 
+    @Value("${aws.cloudfront-url}")
+    private String cloudfrontUrl;
+
     @Value("${aws.region}")
     private String region;
 
@@ -33,13 +36,17 @@ public class S3StorageService implements StorageService {
                 .bucket(bucketName)
                 .key(storageKey)
                 .contentType(file.getContentType())
-                .acl(ObjectCannedACL.PUBLIC_READ)
                 .build();
 
         s3Client.putObject(request,
                 RequestBody.fromBytes(file.getBytes()));
 
-        return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + storageKey;
+        return storageKey;
+    }
+
+    @Override
+    public String generateUrl(String storageKey) {
+        return cloudfrontUrl + "/" + storageKey;
     }
 
     @Override

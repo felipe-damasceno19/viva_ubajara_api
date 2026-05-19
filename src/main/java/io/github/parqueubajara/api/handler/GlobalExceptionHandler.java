@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -111,6 +112,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(
                 new StandardError(LocalDateTime.now(), status.value(),
                         "Erro ao realizar ação", ex.getMessage() , request.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<StandardError> handleAuth(InternalAuthenticationServiceException ex, HttpServletRequest request){
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value()
+                        , "Erro ao realizar ação", "Usuário e/ou senha incorretos", request.getRequestURI())
         );
     }
 }
