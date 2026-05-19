@@ -20,6 +20,9 @@ public record AttractionRequestDTO(
         @NotNull(message = "O status ativo deve ser informado") Boolean active,
 
         //Atributos da classe
+        @Size(max = 200) String shortDescription,
+        Boolean openToPublic,
+        Boolean freeAccess,
         String openingHours,
 
         @Positive(message = "O valor informado deve ser positivo") BigDecimal entryPrice,

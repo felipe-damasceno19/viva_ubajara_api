@@ -17,6 +17,15 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Attraction extends TouristSpot {
 
+    @Column(name = "short_description", length = 200)
+    private String shortDescription;
+
+    @Column(name = "open_to_public")
+    private Boolean openToPublic;
+
+    @Column(name = "free_access")
+    private Boolean freeAccess;
+
     @Column(name = "opening_hours")
     private String openingHours;
 
