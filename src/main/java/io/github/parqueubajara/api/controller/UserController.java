@@ -2,6 +2,7 @@ package io.github.parqueubajara.api.controller;
 
 import io.github.parqueubajara.api.dto.request.UserRequestDTO;
 import io.github.parqueubajara.api.dto.response.UserResponseDTO;
+import io.github.parqueubajara.api.dto.update.PasswordUpdateDTO;
 import io.github.parqueubajara.api.dto.update.RoleUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserProfileUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserUpdateDTO;
@@ -58,6 +59,20 @@ public class UserController implements GenericController{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         String photoUrl = service.uploadPhoto(email, file);
         return ResponseEntity.ok(Map.of("photoUrl", photoUrl));
+    }
+
+    @DeleteMapping("/me/photo")
+    public ResponseEntity<Void> removePhoto() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        service.removePhoto(email);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/me/password")
+    public ResponseEntity<Void> changePassword(@RequestBody @Valid PasswordUpdateDTO dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        service.changePassword(email, dto);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

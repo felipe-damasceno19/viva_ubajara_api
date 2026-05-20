@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.service;
 
+import io.github.parqueubajara.api.dto.update.PasswordUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserProfileUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserUpdateDTO;
 import io.github.parqueubajara.api.exception.DuplicateEmailException;
@@ -102,6 +103,23 @@ public class UserService {
     public void delete(UUID id){
         SystemUser user = findById(id);
         repository.delete(user);
+    }
+
+    @Transactional
+    public void changePassword(String email, PasswordUpdateDTO dto) {
+        SystemUser user = findByEmail(email);
+        if (!encoder.matches(dto.currentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Senha atual incorreta.");
+        }
+        user.setPassword(encoder.encode(dto.newPassword()));
+        repository.save(user);
+    }
+
+    @Transactional
+    public void removePhoto(String email) {
+        SystemUser user = findByEmail(email);
+        user.setPhotoUrl(null);
+        repository.save(user);
     }
 
     @Transactional

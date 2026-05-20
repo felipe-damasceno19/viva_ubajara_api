@@ -99,6 +99,15 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandardError> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Erro na requisição", ex.getMessage(), request.getRequestURI())
+        );
+    }
+
     @ExceptionHandler(DuplicateEmailException.class)
     public ResponseEntity<StandardError> handleDuplicateEmail(DuplicateEmailException ex, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
