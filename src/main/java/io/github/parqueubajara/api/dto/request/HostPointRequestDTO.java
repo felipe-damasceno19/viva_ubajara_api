@@ -3,8 +3,6 @@ package io.github.parqueubajara.api.dto.request;
 import io.github.parqueubajara.api.model.enums.HostType;
 import jakarta.validation.constraints.*;
 
-import java.math.BigDecimal;
-
 public record HostPointRequestDTO(
         //Atributos da superclasse
         @NotBlank(message = "O nome é obrigatório") @Size(max = 100) String name,
@@ -28,7 +26,7 @@ public record HostPointRequestDTO(
 
         Integer numOfRooms,
 
-        @Positive(message = "O valor informado deve ser positivo") BigDecimal avgPrice,
+        String avgPrice,
 
         String bookingUrl
 ) {

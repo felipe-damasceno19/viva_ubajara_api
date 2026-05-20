@@ -76,7 +76,9 @@ public class SecurityConfig {
                                 "/contacts/**",
                                 "/photos/**",
                                 "/testimonials/**",
-                                "/recommended-items/**"
+                                "/recommended-items/**",
+                                "/page-configs/**",
+                                "/gastronomy-items"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/contact-messages").permitAll()
                         .requestMatchers(HttpMethod.POST, "/testimonials").permitAll()

@@ -2,8 +2,6 @@ package io.github.parqueubajara.api.dto.request;
 
 import jakarta.validation.constraints.*;
 
-import java.math.BigDecimal;
-
 public record RestaurantRequestDTO(
         //Atributos da super classe
         @NotBlank(message = "O nome é obrigatório") @Size(max = 100) String name,
@@ -27,9 +25,11 @@ public record RestaurantRequestDTO(
 
         String openingHours,
 
-        @Positive(message = "O valor informado deve ser positivo") BigDecimal avgPrice,
+        String avgPrice,
 
-        Boolean acceptsReservation
+        Boolean acceptsReservation,
+
+        Integer starRating
 
 ) {
 }

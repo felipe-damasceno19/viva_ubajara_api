@@ -2,8 +2,6 @@ package io.github.parqueubajara.api.dto.update;
 
 import jakarta.validation.constraints.*;
 
-import java.math.BigDecimal;
-
 public record RestaurantUpdateDTO(
         //Atributos da super classe
         @Size(max = 100) String name,
@@ -27,8 +25,10 @@ public record RestaurantUpdateDTO(
 
         String openingHours,
 
-        @Positive(message = "O valor informado deve ser positivo") BigDecimal avgPrice,
+        String avgPrice,
 
-        Boolean acceptsReservation
+        Boolean acceptsReservation,
+
+        Integer starRating
 ) {
 }

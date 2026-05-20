@@ -1,8 +1,5 @@
 package io.github.parqueubajara.api.dto.response;
 
-import jakarta.validation.constraints.*;
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,8 +16,9 @@ public record RestaurantResponseDTO(
         Boolean active,
         String cuisineType,
         String openingHours,
-        BigDecimal avgPrice,
+        String avgPrice,
         Boolean acceptsReservation,
+        Integer starRating,
         List<PhotoResponseDTO> photos
 ) {
 }

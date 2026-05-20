@@ -3,10 +3,6 @@ package io.github.parqueubajara.api.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "tb_restaurant")
 @Getter
@@ -23,9 +19,12 @@ public class Restaurant extends TouristSpot {
     private String openingHours;
 
     @Column(name = "avg_price")
-    private BigDecimal avgPrice;
+    private String avgPrice;
 
     @Column(name = "accepts_reservation")
     private Boolean acceptsReservation;
+
+    @Column(name = "star_rating")
+    private Integer starRating;
 
 }

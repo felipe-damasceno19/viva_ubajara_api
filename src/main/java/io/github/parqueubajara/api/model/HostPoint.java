@@ -4,10 +4,6 @@ import io.github.parqueubajara.api.model.enums.HostType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "tb_host_point")
 @Getter
@@ -21,7 +17,7 @@ public class HostPoint extends TouristSpot{
     private Integer numOfRooms;
 
     @Column(name = "avg_price")
-    private BigDecimal avgPrice;
+    private String avgPrice;
 
     @Column(name = "booking_url")
     private String bookingUrl;
