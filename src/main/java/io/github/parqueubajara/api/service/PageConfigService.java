@@ -32,7 +32,7 @@ public class PageConfigService {
         String imageUrl = storageService.generateUrl(storageKey);
 
         PageConfig config = repository.findById(pageKey)
-                .orElse(new PageConfig(pageKey, null));
+                .orElse(new PageConfig(pageKey, null, null));
         config.setImageUrl(imageUrl);
         repository.save(config);
 
