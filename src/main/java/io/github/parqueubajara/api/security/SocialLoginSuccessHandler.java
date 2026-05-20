@@ -5,6 +5,7 @@ import io.github.parqueubajara.api.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +23,9 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final AuthService authService;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtService jwtService;
+
+    @Value("${app.frontend.redirect-url}")
+    private String frontendRedirectUrl;
 
     public SocialLoginSuccessHandler(
             @Lazy AuthService authService,
@@ -53,6 +57,8 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         authentication = new CustomAuthentication(user);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        response.sendRedirect("http://localhost:5173/login-success?token=" + token);
+        String targetUrl = frontendRedirectUrl + "?token=" + token;
+
+        response.sendRedirect(targetUrl);
     }
 }

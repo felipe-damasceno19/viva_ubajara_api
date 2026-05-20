@@ -40,6 +40,9 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000
 
+app:
+  frontend:
+    redirect-url: ${FRONTEND_REDIRECT_URL:http://localhost:5173/login-success}
 ---
 # PERFIL DE DESENVOLVIMENTO (Local)
 spring:
