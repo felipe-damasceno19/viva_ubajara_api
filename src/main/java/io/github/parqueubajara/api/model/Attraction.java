@@ -4,7 +4,6 @@ import io.github.parqueubajara.api.model.enums.AttractionType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +30,7 @@ public class Attraction extends TouristSpot {
     private String openingHours;
 
     @Column(name = "entry_price")
-    private BigDecimal entryPrice;
+    private String entryPrice;
 
     @Column(name = "has_guide")
     private Boolean hasGuide;

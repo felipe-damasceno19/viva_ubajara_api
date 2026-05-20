@@ -3,7 +3,6 @@ package io.github.parqueubajara.api.dto.request;
 import io.github.parqueubajara.api.model.enums.AttractionType;
 import jakarta.validation.constraints.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +27,7 @@ public record AttractionRequestDTO(
         Boolean freeAccess,
         String openingHours,
 
-        @Positive(message = "O valor informado deve ser positivo") BigDecimal entryPrice,
+        String entryPrice,
         Boolean hasGuide,
 
         Integer averageVisitDuration,
