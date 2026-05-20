@@ -16,6 +16,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -47,12 +49,18 @@ public class SocialLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String email = oAuth2User.getAttribute("email");
         String firstName = oAuth2User.getAttribute("given_name");
         String lastName = oAuth2User.getAttribute("family_name");
+        String picture = oAuth2User.getAttribute("picture");
 
-        SystemUser user = authService.processSocialLogin(email, firstName, lastName);
-
+        SystemUser user = authService.processSocialLogin(email, firstName, lastName, picture);
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
-        String token = jwtService.generateToken(userDetails);
+
+        String fullName = user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "");
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("name", fullName);
+        if (user.getPhotoUrl() != null) claims.put("photo", user.getPhotoUrl());
+
+        String token = jwtService.generateToken(userDetails, claims);
 
         authentication = new CustomAuthentication(user);
         SecurityContextHolder.getContext().setAuthentication(authentication);

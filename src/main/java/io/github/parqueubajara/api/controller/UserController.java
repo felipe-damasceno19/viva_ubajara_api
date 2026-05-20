@@ -2,10 +2,12 @@ package io.github.parqueubajara.api.controller;
 
 import io.github.parqueubajara.api.dto.request.UserRequestDTO;
 import io.github.parqueubajara.api.dto.response.UserResponseDTO;
+import io.github.parqueubajara.api.dto.update.RoleUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserProfileUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserUpdateDTO;
 import io.github.parqueubajara.api.mapper.UserMapper;
 import io.github.parqueubajara.api.model.SystemUser;
+import io.github.parqueubajara.api.model.enums.Role;
 import io.github.parqueubajara.api.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -60,8 +62,9 @@ public class UserController implements GenericController{
 
     @GetMapping
     public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(size = 10) Pageable pageable,
-                                                         @RequestParam(required = false) String username){
-        Page<SystemUser> pageEntity = service.findAll(pageable, username);
+                                                         @RequestParam(required = false) String username,
+                                                         @RequestParam(required = false) Role role){
+        Page<SystemUser> pageEntity = service.findAll(pageable, username, role);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
     }
 
@@ -75,6 +78,13 @@ public class UserController implements GenericController{
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody @Valid UserUpdateDTO updateDTO){
         service.update(id, updateDTO);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateRole(@PathVariable UUID id, @RequestBody @Valid RoleUpdateDTO dto){
+        service.changeRole(id, dto.role());
         return ResponseEntity.noContent().build();
     }
 

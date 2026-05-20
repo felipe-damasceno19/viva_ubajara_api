@@ -43,8 +43,8 @@ public class AuthService {
                 .loadUserByUsername(user.getEmail());
 
         String token = jwtService.generateToken(userDetails);
-
-        return new AuthResponseDTO(token, user.getEmail(), user.getUserRole().name());
+        String fullName = user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "");
+        return new AuthResponseDTO(token, user.getEmail(), user.getUserRole().name(), fullName, null);
     }
 
     public AuthResponseDTO login(LoginRequestDTO requestDTO){
@@ -61,13 +61,17 @@ public class AuthService {
                 .loadUserByUsername(user.getEmail());
 
         String token = jwtService.generateToken(userDetails);
-
-        return new AuthResponseDTO(token, user.getEmail(), user.getUserRole().name());
+        String fullName = user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "");
+        return new AuthResponseDTO(token, user.getEmail(), user.getUserRole().name(), fullName, user.getPhotoUrl());
     }
 
     @Transactional
-    public SystemUser processSocialLogin(String email, String firstName, String lastName){
+    public SystemUser processSocialLogin(String email, String firstName, String lastName, String photoUrl){
         return userService.findByEmailOptional(email)
+                .map(existing -> {
+                    userService.updatePhotoUrlIfEmpty(existing, photoUrl);
+                    return existing;
+                })
                 .orElseGet(() -> {
                     SystemUser newUser = new SystemUser();
                     newUser.setFirstName(firstName);
@@ -84,6 +88,7 @@ public class AuthService {
                     newUser.setUsername(finalUsername);
                     newUser.setPassword(encoder.encode(UUID.randomUUID().toString()));
                     newUser.setUserRole(Role.USER);
+                    newUser.setPhotoUrl(photoUrl);
 
                     return userService.save(newUser);
                 });

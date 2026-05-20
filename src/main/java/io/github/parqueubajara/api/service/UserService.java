@@ -6,6 +6,7 @@ import io.github.parqueubajara.api.exception.DuplicateEmailException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.UserMapper;
 import io.github.parqueubajara.api.model.SystemUser;
+import io.github.parqueubajara.api.model.enums.Role;
 import io.github.parqueubajara.api.repository.UserRepository;
 import io.github.parqueubajara.api.service.infra.FileValidationService;
 import io.github.parqueubajara.api.service.infra.S3StorageService;
@@ -43,9 +44,13 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SystemUser> findAll(Pageable pageable, String username){
-        if(username != null){
+    public Page<SystemUser> findAll(Pageable pageable, String username, Role role){
+        if (username != null && role != null) {
+            return repository.findByUsernameContainingIgnoreCaseAndUserRole(username, role, pageable);
+        } else if (username != null) {
             return repository.findByUsernameContainingIgnoreCase(username, pageable);
+        } else if (role != null) {
+            return repository.findByUserRole(role, pageable);
         }
         return repository.findAll(pageable);
     }
@@ -97,6 +102,21 @@ public class UserService {
     public void delete(UUID id){
         SystemUser user = findById(id);
         repository.delete(user);
+    }
+
+    @Transactional
+    public void updatePhotoUrlIfEmpty(SystemUser user, String photoUrl) {
+        if (photoUrl != null && user.getPhotoUrl() == null) {
+            user.setPhotoUrl(photoUrl);
+            repository.save(user);
+        }
+    }
+
+    @Transactional
+    public void changeRole(UUID id, Role role) {
+        SystemUser user = findById(id);
+        user.setUserRole(role);
+        repository.save(user);
     }
 
     @Transactional
