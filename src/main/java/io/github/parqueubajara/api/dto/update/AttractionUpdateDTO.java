@@ -4,6 +4,8 @@ import io.github.parqueubajara.api.model.enums.AttractionType;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
 
 public record AttractionUpdateDTO(
         @Size(max = 100) String name,
@@ -28,6 +30,7 @@ public record AttractionUpdateDTO(
         Boolean hasGuide,
 
         Integer averageVisitDuration,
-        AttractionType category
+        AttractionType category,
+        List<UUID> linkedSpotIds
 ) {
 }

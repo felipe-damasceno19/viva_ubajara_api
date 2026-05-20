@@ -50,6 +50,14 @@ public class Attraction extends TouristSpot {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Attraction> subAttractions = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "tb_attraction_tourist_spot_link",
+            joinColumns = @JoinColumn(name = "attraction_id"),
+            inverseJoinColumns = @JoinColumn(name = "tourist_spot_id")
+    )
+    private List<TouristSpot> linkedSpots = new ArrayList<>();
+
     public void linkSubAttractions(Attraction attraction) {
         subAttractions.add(attraction);
     }

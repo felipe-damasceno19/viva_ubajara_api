@@ -5,14 +5,18 @@ import io.github.parqueubajara.api.exception.DuplicateEmailException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.AttractionMapper;
 import io.github.parqueubajara.api.model.Attraction;
+import io.github.parqueubajara.api.model.TouristSpot;
 import io.github.parqueubajara.api.model.enums.AttractionType;
 import io.github.parqueubajara.api.repository.AttractionRepository;
+import io.github.parqueubajara.api.repository.TouristSpotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +26,7 @@ public class AttractionService {
 
     private final AttractionRepository repository;
     private final AttractionMapper mapper;
+    private final TouristSpotRepository touristSpotRepository;
 
     @Transactional(readOnly = true)
     public Optional<Attraction> findByIdOptional(UUID id) {
@@ -49,11 +54,15 @@ public class AttractionService {
     }
 
     @Transactional
-    public Attraction save(Attraction attraction) {
-        if(attraction.getEmail() != null && !attraction.getEmail().trim().isEmpty()) {
-            if(repository.existsByEmail(attraction.getEmail())){
+    public Attraction save(Attraction attraction, List<UUID> linkedSpotIds) {
+        if (attraction.getEmail() != null && !attraction.getEmail().trim().isEmpty()) {
+            if (repository.existsByEmail(attraction.getEmail())) {
                 throw new DuplicateEmailException("E-mail já cadastrado");
             }
+        }
+        if (linkedSpotIds != null && !linkedSpotIds.isEmpty()) {
+            List<TouristSpot> spots = new ArrayList<>(touristSpotRepository.findAllById(linkedSpotIds));
+            attraction.setLinkedSpots(spots);
         }
         return repository.save(attraction);
     }
@@ -71,9 +80,13 @@ public class AttractionService {
     }
 
     @Transactional
-    public void update(UUID id, AttractionUpdateDTO updateDTO){
+    public void update(UUID id, AttractionUpdateDTO updateDTO) {
         Attraction attraction = findById(id);
         mapper.updateEntityFromDto(updateDTO, attraction);
+        if (updateDTO.linkedSpotIds() != null) {
+            List<TouristSpot> spots = new ArrayList<>(touristSpotRepository.findAllById(updateDTO.linkedSpotIds()));
+            attraction.setLinkedSpots(spots);
+        }
         repository.save(attraction);
     }
 

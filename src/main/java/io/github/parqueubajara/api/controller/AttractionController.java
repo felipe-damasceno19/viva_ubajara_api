@@ -55,10 +55,9 @@ public class AttractionController implements GenericController{
     @PreAuthorize("hasAnyRole('ADMIN', 'GUIDE')")
     public ResponseEntity<AttractionResponseDTO> save(@RequestBody @Valid AttractionRequestDTO requestDTO){
         Attraction attraction = mapper.toEntity(requestDTO);
-        service.save(attraction);
-        URI location = generateHeaderLocation(attraction.getId());
-
-        return ResponseEntity.created(location).body(mapper.toResponseDTO(attraction));
+        Attraction saved = service.save(attraction, requestDTO.linkedSpotIds());
+        URI location = generateHeaderLocation(saved.getId());
+        return ResponseEntity.created(location).body(mapper.toResponseDTO(saved));
     }
 
     @PostMapping("/{id}/sub-attractions")

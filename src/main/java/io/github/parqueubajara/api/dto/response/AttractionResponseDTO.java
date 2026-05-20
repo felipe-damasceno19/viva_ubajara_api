@@ -26,6 +26,7 @@ public record AttractionResponseDTO(
         Integer averageVisitDuration,
         AttractionType category,
         List<PhotoResponseDTO> photos,
-        List<AttractionResponseDTO> subAttractions
+        List<AttractionResponseDTO> subAttractions,
+        List<TouristSpotSummaryDTO> linkedSpots
 ) {
 }

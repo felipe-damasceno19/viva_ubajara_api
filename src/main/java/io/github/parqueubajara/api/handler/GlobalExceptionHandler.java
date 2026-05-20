@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -56,6 +57,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(
                 new StandardError(LocalDateTime.now(), status.value(),
                         "Arquivo muito grando", "O arquivo excede o tamanho máximo permitido de 5MB", request.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<StandardError> handleUnreadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Requisição inválida", "Valor inválido no corpo da requisição", request.getRequestURI())
         );
     }
 

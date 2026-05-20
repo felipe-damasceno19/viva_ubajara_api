@@ -4,6 +4,8 @@ import io.github.parqueubajara.api.model.enums.AttractionType;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
 
 public record AttractionRequestDTO(
         //Atributos da superclasse
@@ -30,6 +32,7 @@ public record AttractionRequestDTO(
         Boolean hasGuide,
 
         Integer averageVisitDuration,
-        @NotNull(message = "A categoria deve ser informada") AttractionType category
+        @NotNull(message = "A categoria deve ser informada") AttractionType category,
+        List<UUID> linkedSpotIds
 ) {
 }
