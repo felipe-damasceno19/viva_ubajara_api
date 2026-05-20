@@ -7,6 +7,7 @@ import io.github.parqueubajara.api.security.CustomAuthenticationProvider;
 import io.github.parqueubajara.api.security.JwtFilter;
 import io.github.parqueubajara.api.security.SocialLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,7 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -37,6 +37,9 @@ public class SecurityConfig {
     private final SocialLoginFailureHandler failureHandler;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+    @Value("${app.frontend.redirect-url}")
+    private String frontendRedirectUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
@@ -98,7 +101,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOriginPattern("*");
+        String frontendOrigin = frontendRedirectUrl.replace("/login-success", "");
+
+        config.addAllowedOriginPattern("http://localhost:5173");
+        config.addAllowedOriginPattern(frontendOrigin);
 
         config.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
