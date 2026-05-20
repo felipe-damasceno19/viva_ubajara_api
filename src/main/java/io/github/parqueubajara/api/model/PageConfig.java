@@ -8,8 +8,11 @@ import lombok.*;
 public class PageConfig {
     @Id
     @Column(name = "page_key", length = 50)
-    private String pageKey; // "ESTABELECIMENTOS", "EVENTOS", "DEPOIMENTOS"
+    private String pageKey;
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;
+
+    @Column(name = "description", length = 500)
+    private String description;
 }

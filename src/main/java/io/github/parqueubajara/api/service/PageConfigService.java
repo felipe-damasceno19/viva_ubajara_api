@@ -46,4 +46,12 @@ public class PageConfigService {
             repository.save(config);
         });
     }
+
+    @Transactional
+    public void updateDescription(String pageKey, String description) {
+        PageConfig config = repository.findById(pageKey)
+                .orElse(new PageConfig(pageKey, null, null));
+        config.setDescription(description);
+        repository.save(config);
+    }
 }

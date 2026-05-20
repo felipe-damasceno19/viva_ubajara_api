@@ -24,10 +24,24 @@ public class PageConfigController {
     @GetMapping("/{pageKey}")
     public ResponseEntity<Map<String, String>> getByKey(@PathVariable String pageKey) {
         Optional<PageConfig> config = service.findByKey(pageKey);
-        if (config.isEmpty() || config.get().getImageUrl() == null) {
-            return ResponseEntity.notFound().build();
+        if (config.isEmpty()) {
+            return ResponseEntity.ok(Map.of());
         }
-        return ResponseEntity.ok(Map.of("imageUrl", config.get().getImageUrl()));
+        PageConfig c = config.get();
+        java.util.HashMap<String, String> result = new java.util.HashMap<>();
+        if (c.getImageUrl() != null) result.put("imageUrl", c.getImageUrl());
+        if (c.getDescription() != null) result.put("description", c.getDescription());
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{pageKey}/description")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateDescription(
+            @PathVariable String pageKey,
+            @RequestBody Map<String, String> body
+    ) {
+        service.updateDescription(pageKey, body.get("description"));
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{pageKey}/image")
