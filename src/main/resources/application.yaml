@@ -43,6 +43,7 @@ jwt:
 app:
   frontend:
     redirect-url: ${FRONTEND_REDIRECT_URL:http://localhost:5173/login-success}
+    url: {$FRONTEND_URL:localhost:5173}
 ---
 # PERFIL DE DESENVOLVIMENTO (Local)
 spring:
@@ -80,7 +81,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
