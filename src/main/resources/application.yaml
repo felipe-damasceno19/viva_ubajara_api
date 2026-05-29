@@ -2,6 +2,10 @@ spring:
   application:
     name: ubajara-api
 
+  output:
+    ansi:
+      enabled: ALWAYS
+
   servlet:
     multipart:
       max-file-size: 10MB
@@ -15,6 +19,21 @@ spring:
           google:
             client-id: ${CLIENT_ID}
             client-secret: ${CLIENT_SECRET}
+
+logging:
+  pattern:
+    console: '%clr(%d{dd-MM-yyyy HH:mm:ss}){faint} %clr(%5p) %clr([%t]){faint} %clr(%-40.40logger){cyan} %clr(:){yellow} %m%n'
+  file:
+    name: app.log
+  level:
+    root: warn
+    io:
+      github:
+        parqueubajara:
+          api: info
+    org:
+      springframework:
+        security: info
 
 # Configurações globais que não mudam entre ambientes
 aws:
