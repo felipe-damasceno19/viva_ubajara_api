@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.controller;
 
+import io.github.parqueubajara.api.dto.request.CompanyRegisterRequestDTO;
 import io.github.parqueubajara.api.dto.request.LoginRequestDTO;
 import io.github.parqueubajara.api.dto.request.UserRequestDTO;
 import io.github.parqueubajara.api.dto.response.AuthResponseDTO;
@@ -39,6 +40,19 @@ public class AuthController {
     public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid UserRequestDTO requestDTO){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authService.register(requestDTO));
+    }
+
+    @Operation(summary = "Registrar nova empresa")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Empresa registrada com sucesso",
+                    content = @Content(schema = @Schema(implementation = AuthResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou email já cadastrado",
+                    content = @Content(schema = @Schema(implementation = StandardError.class)))
+    })
+    @PostMapping("/register-company")
+    public ResponseEntity<AuthResponseDTO> registerCompany(@RequestBody @Valid CompanyRegisterRequestDTO requestDTO){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(authService.registerCompany(requestDTO));
     }
 
     @Operation(summary = "Login")

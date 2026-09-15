@@ -71,6 +71,10 @@ public class UserService {
         return repository.existsByUsername(username);
     }
 
+    public boolean existsByCnpj(String cnpj){
+        return repository.existsByCnpj(cnpj);
+    }
+
     @Transactional
     public SystemUser save(SystemUser user){
         if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {

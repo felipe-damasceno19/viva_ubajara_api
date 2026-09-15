@@ -1,8 +1,10 @@
 package io.github.parqueubajara.api.service;
 
+import io.github.parqueubajara.api.dto.request.CompanyRegisterRequestDTO;
 import io.github.parqueubajara.api.dto.request.LoginRequestDTO;
 import io.github.parqueubajara.api.dto.request.UserRequestDTO;
 import io.github.parqueubajara.api.dto.response.AuthResponseDTO;
+import io.github.parqueubajara.api.exception.DuplicateRegistry;
 import io.github.parqueubajara.api.model.SystemUser;
 import io.github.parqueubajara.api.model.enums.Role;
 import io.github.parqueubajara.api.security.CustomUserDetailsService;
@@ -36,6 +38,32 @@ public class AuthService {
         user.setEmail(requestDTO.email());
         user.setPassword(encoder.encode(requestDTO.password()));
         user.setUserRole(Role.USER);
+
+        userService.save(user);
+
+        UserDetails userDetails = customUserDetailsService
+                .loadUserByUsername(user.getEmail());
+
+        String token = jwtService.generateToken(userDetails);
+        String fullName = user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "");
+        return new AuthResponseDTO(token, user.getEmail(), user.getUserRole().name(), fullName, null);
+    }
+
+    public AuthResponseDTO registerCompany(CompanyRegisterRequestDTO requestDTO){
+
+        if (userService.existsByCnpj(requestDTO.cnpj())) {
+            throw new DuplicateRegistry("CNPJ já cadastrado: " + requestDTO.cnpj());
+        }
+
+        SystemUser user = new SystemUser();
+        user.setFirstName(requestDTO.firstName());
+        user.setLastName(requestDTO.lastName());
+        user.setUsername(requestDTO.username());
+        user.setEmail(requestDTO.email());
+        user.setPassword(encoder.encode(requestDTO.password()));
+        user.setUserRole(Role.EMPRESA);
+        user.setCompanyName(requestDTO.companyName());
+        user.setCnpj(requestDTO.cnpj());
 
         userService.save(user);
 
