@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.dto.response;
 
+import io.github.parqueubajara.api.model.enums.ApprovalStatus;
 import io.github.parqueubajara.api.model.enums.HostType;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public record HostPointResponseDTO(
         String instagramUrl,
         String mapsUrl,
         Boolean active,
+        ApprovalStatus approvalStatus,
         HostType hostType,
         Integer numOfRooms,
         String avgPrice,

@@ -1,5 +1,7 @@
 package io.github.parqueubajara.api.dto.response;
 
+import io.github.parqueubajara.api.model.enums.ApprovalStatus;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +16,7 @@ public record RestaurantResponseDTO(
         String instagramUrl,
         String mapsUrl,
         Boolean active,
+        ApprovalStatus approvalStatus,
         String cuisineType,
         String openingHours,
         String avgPrice,
