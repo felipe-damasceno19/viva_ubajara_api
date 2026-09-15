@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface GastronomyItemRepository extends JpaRepository<GastronomyItem, UUID> {
 
     List<GastronomyItem> findByActiveTrueOrderByDisplayOrderAscNameAsc();
+
+    List<GastronomyItem> findByRestaurantOwnerId(UUID ownerId);
 }

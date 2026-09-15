@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.controller;
 
+import io.github.parqueubajara.api.dto.request.ApprovalUpdateDTO;
 import io.github.parqueubajara.api.dto.request.RestaurantRequestDTO;
 import io.github.parqueubajara.api.dto.response.PhotoResponseDTO;
 import io.github.parqueubajara.api.dto.response.RestaurantResponseDTO;
@@ -44,6 +45,20 @@ public class RestaurantController implements GenericController {
     public ResponseEntity<Page<RestaurantResponseDTO>> getAll(@PageableDefault(size = 10)Pageable pageable){
         Page<Restaurant> pageEntity = service.findAllPublic(pageable);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+    }
+
+    @GetMapping("/moderation")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<RestaurantResponseDTO>> getAllForModeration(@PageableDefault(size = 10)Pageable pageable){
+        Page<Restaurant> pageEntity = service.findAll(pageable);
+        return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+    }
+
+    @PatchMapping("/{id}/approval")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateApprovalStatus(@PathVariable UUID id, @RequestBody @Valid ApprovalUpdateDTO dto){
+        service.updateApprovalStatus(id, dto.status());
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping

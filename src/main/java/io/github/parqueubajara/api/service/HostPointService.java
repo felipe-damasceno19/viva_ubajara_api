@@ -4,6 +4,7 @@ import io.github.parqueubajara.api.dto.update.HostPointUpdateDTO;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.HostPointMapper;
 import io.github.parqueubajara.api.model.HostPoint;
+import io.github.parqueubajara.api.model.enums.ApprovalStatus;
 import io.github.parqueubajara.api.model.enums.HostType;
 import io.github.parqueubajara.api.repository.HostPointRepository;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +78,13 @@ public class HostPointService {
         HostPoint hostPoint = findById(id);
         repository.delete(hostPoint);
     }
-    
+
+    @Transactional
+    public void updateApprovalStatus(UUID id, ApprovalStatus status){
+        HostPoint hostPoint = findById(id);
+        hostPoint.setApprovalStatus(status);
+        hostPoint.setActive(status == ApprovalStatus.APPROVED);
+        repository.save(hostPoint);
+    }
+
 }

@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.controller;
 
+import io.github.parqueubajara.api.dto.request.ApprovalUpdateDTO;
 import io.github.parqueubajara.api.dto.request.HostPointRequestDTO;
 import io.github.parqueubajara.api.dto.response.HostPointResponseDTO;
 import io.github.parqueubajara.api.dto.response.PhotoResponseDTO;
@@ -46,6 +47,21 @@ public class HostPointController implements GenericController {
                                                              @RequestParam(required = false)HostType type) {
         Page<HostPoint> pageEntity = service.findAllPublic(pageable, type);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+    }
+
+    @GetMapping("/moderation")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<HostPointResponseDTO>> getAllForModeration(@PageableDefault(size = 10)Pageable pageable,
+                                                                          @RequestParam(required = false)HostType type) {
+        Page<HostPoint> pageEntity = service.findAll(pageable, type);
+        return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+    }
+
+    @PatchMapping("/{id}/approval")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateApprovalStatus(@PathVariable UUID id, @RequestBody @Valid ApprovalUpdateDTO dto){
+        service.updateApprovalStatus(id, dto.status());
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping

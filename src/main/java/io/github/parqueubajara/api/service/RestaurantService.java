@@ -4,6 +4,7 @@ import io.github.parqueubajara.api.dto.update.RestaurantUpdateDTO;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.RestaurantMapper;
 import io.github.parqueubajara.api.model.Restaurant;
+import io.github.parqueubajara.api.model.enums.ApprovalStatus;
 import io.github.parqueubajara.api.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -68,5 +69,13 @@ public class RestaurantService {
     public void delete(UUID id){
         Restaurant restaurant = findById(id);
         repository.delete(restaurant);
+    }
+
+    @Transactional
+    public void updateApprovalStatus(UUID id, ApprovalStatus status){
+        Restaurant restaurant = findById(id);
+        restaurant.setApprovalStatus(status);
+        restaurant.setActive(status == ApprovalStatus.APPROVED);
+        repository.save(restaurant);
     }
 }
