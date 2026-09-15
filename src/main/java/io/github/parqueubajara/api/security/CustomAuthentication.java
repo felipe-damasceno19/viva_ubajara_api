@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,21 +23,15 @@ public class CustomAuthentication implements Authentication {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        if (user.getUserRole() == Role.ADMIN) {
-            return List.of(
-                    new SimpleGrantedAuthority("ROLE_ADMIN"),
-                    new SimpleGrantedAuthority("ROLE_USER")
-            );
+        Role role = user.getUserRole();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+
+        if (role != Role.USER) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
 
-        if (user.getUserRole() == Role.GUIDE) {
-            return List.of(
-                    new SimpleGrantedAuthority("ROLE_GUIDE"),
-                    new SimpleGrantedAuthority("ROLE_USER")
-            );
-        }
-
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return authorities;
     }
 
     @Override
