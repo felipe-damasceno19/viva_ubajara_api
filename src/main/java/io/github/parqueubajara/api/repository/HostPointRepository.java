@@ -25,5 +25,13 @@ public interface HostPointRepository extends JpaRepository<HostPoint, UUID> {
     @EntityGraph(attributePaths = {"photos"})
     Optional<HostPoint> findById(UUID id);
 
+    @EntityGraph(attributePaths = {"photos"})
+    Page<HostPoint> findByActiveTrue(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Optional<HostPoint> findByIdAndActiveTrue(UUID id);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Page<HostPoint> findByHostTypeAndActiveTrue(HostType hostType, Pageable pageable);
 
 }

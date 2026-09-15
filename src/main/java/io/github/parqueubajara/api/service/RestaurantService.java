@@ -37,6 +37,17 @@ public class RestaurantService {
         return repository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<Restaurant> findAllPublic(Pageable pageable){
+        return repository.findByActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Restaurant findByIdPublic(UUID id){
+        return repository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurante de ID: "+id+" encontrado!"));
+    }
+
     @Transactional
     public Restaurant save(Restaurant restaurant){
         if (restaurant.getEmail() != null && !restaurant.getEmail().trim().isEmpty()) {

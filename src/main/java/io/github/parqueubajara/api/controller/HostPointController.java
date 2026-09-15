@@ -37,14 +37,14 @@ public class HostPointController implements GenericController {
 
     @GetMapping("/{id}")
     public ResponseEntity<HostPointResponseDTO> getById(@PathVariable UUID id){
-        HostPoint hostPoint = service.findById(id);
+        HostPoint hostPoint = service.findByIdPublic(id);
         return ResponseEntity.ok(mapper.toResponseDTO(hostPoint));
     }
 
     @GetMapping
     public ResponseEntity<Page<HostPointResponseDTO>> getAll(@PageableDefault(size = 10)Pageable pageable,
                                                              @RequestParam(required = false)HostType type) {
-        Page<HostPoint> pageEntity = service.findAll(pageable, type);
+        Page<HostPoint> pageEntity = service.findAllPublic(pageable, type);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
     }
 

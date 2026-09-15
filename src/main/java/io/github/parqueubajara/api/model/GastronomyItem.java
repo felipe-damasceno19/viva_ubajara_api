@@ -23,4 +23,8 @@ public class GastronomyItem {
 
     @Column(name = "active")
     private Boolean active;
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
 }

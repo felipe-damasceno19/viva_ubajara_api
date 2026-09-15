@@ -36,13 +36,13 @@ public class RestaurantController implements GenericController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantResponseDTO> getById(@PathVariable UUID id){
-        Restaurant restaurant = service.findById(id);
+        Restaurant restaurant = service.findByIdPublic(id);
         return ResponseEntity.ok(mapper.toResponseDTO(restaurant));
     }
 
     @GetMapping
     public ResponseEntity<Page<RestaurantResponseDTO>> getAll(@PageableDefault(size = 10)Pageable pageable){
-        Page<Restaurant> pageEntity = service.findAll(pageable);
+        Page<Restaurant> pageEntity = service.findAllPublic(pageable);
         return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
     }
 

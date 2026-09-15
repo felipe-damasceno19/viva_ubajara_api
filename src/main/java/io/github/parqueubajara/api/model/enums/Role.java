@@ -8,7 +8,8 @@ public enum Role {
 
     ADMIN("admin"),
     USER("user"),
-    GUIDE("guide");
+    GUIDE("guide"),
+    EMPRESA("empresa");
 
     private final String valor;
 

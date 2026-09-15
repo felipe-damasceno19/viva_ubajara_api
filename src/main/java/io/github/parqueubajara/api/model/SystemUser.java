@@ -50,6 +50,12 @@ public class SystemUser {
     @Column(name = "user_photo_url", length = 500)
     private String photoUrl;
 
+    @Column(name = "company_name", length = 150)
+    private String companyName;
+
+    @Column(name = "cnpj", length = 20, unique = true)
+    private String cnpj;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createDate;

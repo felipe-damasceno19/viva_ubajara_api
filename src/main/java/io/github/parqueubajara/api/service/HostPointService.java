@@ -41,6 +41,20 @@ public class HostPointService {
         return repository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<HostPoint> findAllPublic(Pageable pageable, HostType type){
+        if(type != null){
+            return repository.findByHostTypeAndActiveTrue(type, pageable);
+        }
+        return repository.findByActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public HostPoint findByIdPublic(UUID id){
+        return repository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ponto de hospedagem de ID: "+id+" não encontrado!"));
+    }
+
     @Transactional
     public HostPoint save(HostPoint hostPoint){
         if(hostPoint.getEmail() != null && !hostPoint.getEmail().trim().isEmpty()) {

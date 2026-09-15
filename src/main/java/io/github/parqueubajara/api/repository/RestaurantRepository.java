@@ -22,4 +22,10 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, UUID> {
     @Override
     @EntityGraph(attributePaths = {"photos"})
     Optional<Restaurant> findById(UUID id);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Page<Restaurant> findByActiveTrue(Pageable pageable);
+
+    @EntityGraph(attributePaths = {"photos"})
+    Optional<Restaurant> findByIdAndActiveTrue(UUID id);
 }

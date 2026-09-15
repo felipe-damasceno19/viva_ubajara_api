@@ -1,5 +1,6 @@
 package io.github.parqueubajara.api.model;
 
+import io.github.parqueubajara.api.model.enums.ApprovalStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -49,6 +50,14 @@ public class TouristSpot extends BaseEntity{
 
     @Column(name = "active")
     private Boolean active;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private SystemUser owner;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approval_status", length = 20)
+    private ApprovalStatus approvalStatus = ApprovalStatus.APPROVED;
 
     @OneToMany(mappedBy = "touristSpot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos;
