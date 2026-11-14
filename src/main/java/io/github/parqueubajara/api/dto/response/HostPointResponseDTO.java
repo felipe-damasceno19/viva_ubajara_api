@@ -18,6 +18,7 @@ public record HostPointResponseDTO(
         String mapsUrl,
         Boolean active,
         ApprovalStatus approvalStatus,
+        boolean claimable,
         HostType hostType,
         Integer numOfRooms,
         String avgPrice,

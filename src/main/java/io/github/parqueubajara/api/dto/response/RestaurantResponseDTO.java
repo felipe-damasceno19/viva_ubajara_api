@@ -17,6 +17,7 @@ public record RestaurantResponseDTO(
         String mapsUrl,
         Boolean active,
         ApprovalStatus approvalStatus,
+        boolean claimable,
         String cuisineType,
         String openingHours,
         String avgPrice,
