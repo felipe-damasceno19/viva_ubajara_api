@@ -7,6 +7,7 @@ import io.github.parqueubajara.api.dto.request.RestaurantRequestDTO;
 import io.github.parqueubajara.api.dto.response.CompanyEstablishmentResponseDTO;
 import io.github.parqueubajara.api.dto.response.GastronomyItemResponseDTO;
 import io.github.parqueubajara.api.dto.response.HostPointResponseDTO;
+import io.github.parqueubajara.api.dto.response.PhotoResponseDTO;
 import io.github.parqueubajara.api.dto.response.RestaurantResponseDTO;
 import io.github.parqueubajara.api.dto.update.CompanyEstablishmentUpdateDTO;
 import io.github.parqueubajara.api.dto.update.GastronomyItemUpdateDTO;
@@ -28,6 +29,9 @@ import io.github.parqueubajara.api.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +46,7 @@ public class CompanyService {
     private final GastronomyItemRepository gastronomyItemRepository;
     private final RestaurantMapper restaurantMapper;
     private final HostPointMapper hostPointMapper;
+    private final PhotoService photoService;
 
     @Transactional(readOnly = true)
     public CompanyEstablishmentResponseDTO getMyEstablishment(SystemUser user) {
@@ -131,6 +136,21 @@ public class CompanyService {
         }
 
         throw new ResourceNotFoundException("Você ainda não possui um estabelecimento cadastrado");
+    }
+
+    @Transactional
+    public PhotoResponseDTO uploadEstablishmentPhoto(SystemUser user, MultipartFile file, Integer displayOrder) throws IOException {
+        Optional<Restaurant> restaurant = restaurantRepository.findByOwnerId(user.getId());
+        if (restaurant.isPresent()) {
+            return photoService.uploadForRestaurant(restaurant.get().getId(), file, null, displayOrder);
+        }
+
+        Optional<HostPoint> hostPoint = hostPointRepository.findByOwnerId(user.getId());
+        if (hostPoint.isPresent()) {
+            return photoService.uploadForHostPoint(hostPoint.get().getId(), file, null, displayOrder);
+        }
+
+        throw new ResourceNotFoundException("Cadastre seu estabelecimento antes de enviar fotos");
     }
 
     @Transactional(readOnly = true)

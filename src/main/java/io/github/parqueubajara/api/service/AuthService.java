@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.service;
 
 import io.github.parqueubajara.api.dto.request.CompanyRegisterRequestDTO;
+import io.github.parqueubajara.api.dto.request.CompanyActivationRequestDTO;
 import io.github.parqueubajara.api.dto.request.LoginRequestDTO;
 import io.github.parqueubajara.api.dto.request.UserRequestDTO;
 import io.github.parqueubajara.api.dto.response.AuthResponseDTO;
@@ -51,8 +52,9 @@ public class AuthService {
 
     public AuthResponseDTO registerCompany(CompanyRegisterRequestDTO requestDTO){
 
-        if (userService.existsByCnpj(requestDTO.cnpj())) {
-            throw new DuplicateRegistry("CNPJ já cadastrado: " + requestDTO.cnpj());
+        String cnpj = CnpjValidator.normalize(requestDTO.cnpj());
+        if (userService.existsByCnpj(cnpj)) {
+            throw new DuplicateRegistry("CNPJ já cadastrado: " + cnpj);
         }
 
         SystemUser user = new SystemUser();
@@ -63,7 +65,7 @@ public class AuthService {
         user.setPassword(encoder.encode(requestDTO.password()));
         user.setUserRole(Role.EMPRESA);
         user.setCompanyName(requestDTO.companyName());
-        user.setCnpj(requestDTO.cnpj());
+        user.setCnpj(cnpj);
 
         userService.save(user);
 
@@ -73,6 +75,18 @@ public class AuthService {
         String token = jwtService.generateToken(userDetails);
         String fullName = user.getFirstName() + (user.getLastName() != null ? " " + user.getLastName() : "");
         return new AuthResponseDTO(token, user.getEmail(), user.getUserRole().name(), fullName, null);
+    }
+
+    @Transactional
+    public AuthResponseDTO activateCompany(String email, CompanyActivationRequestDTO requestDTO) {
+        SystemUser user = userService.activateCompany(
+                email, requestDTO.companyName(), requestDTO.cnpj());
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
+        String token = jwtService.generateToken(userDetails);
+        String fullName = user.getFirstName()
+                + (user.getLastName() != null ? " " + user.getLastName() : "");
+        return new AuthResponseDTO(token, user.getEmail(), user.getUserRole().name(),
+                fullName, user.getPhotoUrl());
     }
 
     public AuthResponseDTO login(LoginRequestDTO requestDTO){

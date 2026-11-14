@@ -6,6 +6,7 @@ import io.github.parqueubajara.api.exception.InvalidFileException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -133,6 +134,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(
                 new StandardError(LocalDateTime.now(), status.value(),
                         "Erro ao realizar ação", ex.getMessage() , request.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<StandardError> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex, HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        if (!requestUri.endsWith("/auth/activate-company")
+                && !requestUri.endsWith("/auth/register-company")) {
+            return handleGeneric(ex, request);
+        }
+
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Erro ao realizar ação", "Um dos dados informados já está cadastrado",
+                        request.getRequestURI())
         );
     }
 

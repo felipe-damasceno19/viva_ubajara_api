@@ -1,6 +1,7 @@
 package io.github.parqueubajara.api.controller;
 
 import io.github.parqueubajara.api.dto.request.CompanyRegisterRequestDTO;
+import io.github.parqueubajara.api.dto.request.CompanyActivationRequestDTO;
 import io.github.parqueubajara.api.dto.request.LoginRequestDTO;
 import io.github.parqueubajara.api.dto.request.UserRequestDTO;
 import io.github.parqueubajara.api.dto.response.AuthResponseDTO;
@@ -16,6 +17,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +56,15 @@ public class AuthController {
     public ResponseEntity<AuthResponseDTO> registerCompany(@RequestBody @Valid CompanyRegisterRequestDTO requestDTO){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authService.registerCompany(requestDTO));
+    }
+
+    @Operation(summary = "Ativar acesso empresarial na conta autenticada")
+    @PostMapping("/activate-company")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<AuthResponseDTO> activateCompany(
+            @RequestBody @Valid CompanyActivationRequestDTO requestDTO,
+            Authentication authentication) {
+        return ResponseEntity.ok(authService.activateCompany(authentication.getName(), requestDTO));
     }
 
     @Operation(summary = "Login")
