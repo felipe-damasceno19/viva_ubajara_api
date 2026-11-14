@@ -4,6 +4,7 @@ import io.github.parqueubajara.api.dto.update.PasswordUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserProfileUpdateDTO;
 import io.github.parqueubajara.api.dto.update.UserUpdateDTO;
 import io.github.parqueubajara.api.exception.DuplicateEmailException;
+import io.github.parqueubajara.api.exception.DuplicateRegistry;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.UserMapper;
 import io.github.parqueubajara.api.model.SystemUser;
@@ -14,6 +15,7 @@ import io.github.parqueubajara.api.service.infra.S3StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +74,39 @@ public class UserService {
     }
 
     public boolean existsByCnpj(String cnpj){
-        return repository.existsByCnpj(cnpj);
+        return repository.existsByCnpjIn(
+                CnpjValidator.equivalentValues(CnpjValidator.normalize(cnpj)));
+    }
+
+    @Transactional
+    public SystemUser activateCompany(String email, String companyName, String cnpj) {
+        SystemUser user = repository.findByEmailForUpdate(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+        String normalizedCnpj = CnpjValidator.normalize(cnpj);
+        String normalizedCompanyName = companyName.trim();
+
+        if (user.getUserRole() == Role.EMPRESA) {
+            if (user.getCompanyName() != null
+                    && normalizedCompanyName.equals(user.getCompanyName().trim())
+                    && CnpjValidator.equivalentValues(normalizedCnpj).contains(user.getCnpj())) {
+                return user;
+            }
+            throw new DuplicateRegistry("O acesso empresarial desta conta já foi ativado");
+        }
+
+        if (user.getUserRole() != Role.USER) {
+            throw new AccessDeniedException("Somente contas de usuário podem ativar o acesso empresarial");
+        }
+
+        if (repository.existsByCnpjInAndIdNot(
+                CnpjValidator.equivalentValues(normalizedCnpj), user.getId())) {
+            throw new DuplicateRegistry("CNPJ já cadastrado: " + normalizedCnpj);
+        }
+
+        user.setCompanyName(normalizedCompanyName);
+        user.setCnpj(normalizedCnpj);
+        user.setUserRole(Role.EMPRESA);
+        return repository.save(user);
     }
 
     @Transactional
