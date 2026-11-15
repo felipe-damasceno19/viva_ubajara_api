@@ -26,6 +26,16 @@ public record AttractionResponseDTO(
         AttractionType category,
         List<PhotoResponseDTO> photos,
         List<AttractionResponseDTO> subAttractions,
-        List<TouristSpotSummaryDTO> linkedSpots
+        List<TouristSpotSummaryDTO> linkedSpots,
+        Double averageRating,
+        long reviewCount
 ) {
+
+    public AttractionResponseDTO withRating(Double averageRating, long reviewCount) {
+        return new AttractionResponseDTO(
+                id, name, description, address, phone, email, webUrl, instagramUrl, mapsUrl, active,
+                shortDescription, openToPublic, freeAccess, openingHours, entryPrice, hasGuide,
+                averageVisitDuration, category, photos, subAttractions, linkedSpots,
+                averageRating, reviewCount);
+    }
 }

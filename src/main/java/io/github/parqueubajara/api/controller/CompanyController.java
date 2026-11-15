@@ -1,14 +1,17 @@
 package io.github.parqueubajara.api.controller;
 
 import io.github.parqueubajara.api.dto.request.CompanyEstablishmentRequestDTO;
+import io.github.parqueubajara.api.dto.request.EstablishmentClaimRequestDTO;
 import io.github.parqueubajara.api.dto.request.GastronomyItemRequestDTO;
 import io.github.parqueubajara.api.dto.response.CompanyEstablishmentResponseDTO;
+import io.github.parqueubajara.api.dto.response.EstablishmentClaimResponseDTO;
 import io.github.parqueubajara.api.dto.response.GastronomyItemResponseDTO;
 import io.github.parqueubajara.api.dto.response.PhotoResponseDTO;
 import io.github.parqueubajara.api.dto.update.CompanyEstablishmentUpdateDTO;
 import io.github.parqueubajara.api.dto.update.GastronomyItemUpdateDTO;
 import io.github.parqueubajara.api.model.SystemUser;
 import io.github.parqueubajara.api.service.CompanyService;
+import io.github.parqueubajara.api.service.EstablishmentClaimService;
 import io.github.parqueubajara.api.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,6 +37,7 @@ public class CompanyController {
 
     private final CompanyService service;
     private final UserService userService;
+    private final EstablishmentClaimService claimService;
 
     @GetMapping("/establishment")
     public ResponseEntity<CompanyEstablishmentResponseDTO> getEstablishment() {
@@ -87,6 +91,25 @@ public class CompanyController {
     public ResponseEntity<Void> deleteMenuItem(@PathVariable UUID id) {
         SystemUser user = getAuthenticatedUser();
         service.deleteMenuItem(user, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/claims")
+    public ResponseEntity<EstablishmentClaimResponseDTO> createClaim(@RequestBody @Valid EstablishmentClaimRequestDTO dto) {
+        SystemUser user = getAuthenticatedUser();
+        return ResponseEntity.status(HttpStatus.CREATED).body(claimService.create(user, dto));
+    }
+
+    @GetMapping("/claims")
+    public ResponseEntity<List<EstablishmentClaimResponseDTO>> listMyClaims() {
+        SystemUser user = getAuthenticatedUser();
+        return ResponseEntity.ok(claimService.listMine(user));
+    }
+
+    @PostMapping("/claims/{id}/cancel")
+    public ResponseEntity<Void> cancelClaim(@PathVariable UUID id) {
+        SystemUser user = getAuthenticatedUser();
+        claimService.cancel(user, id);
         return ResponseEntity.noContent().build();
     }
 

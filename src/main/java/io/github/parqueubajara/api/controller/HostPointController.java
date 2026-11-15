@@ -10,6 +10,7 @@ import io.github.parqueubajara.api.model.HostPoint;
 import io.github.parqueubajara.api.model.enums.HostType;
 import io.github.parqueubajara.api.service.HostPointService;
 import io.github.parqueubajara.api.service.PhotoService;
+import io.github.parqueubajara.api.service.ReviewService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -35,18 +38,20 @@ public class HostPointController implements GenericController {
     private final HostPointService service;
     private final HostPointMapper mapper;
     private final PhotoService photoService;
+    private final ReviewService reviewService;
 
     @GetMapping("/{id}")
     public ResponseEntity<HostPointResponseDTO> getById(@PathVariable UUID id){
         HostPoint hostPoint = service.findByIdPublic(id);
-        return ResponseEntity.ok(mapper.toResponseDTO(hostPoint));
+        return ResponseEntity.ok(withRating(mapper.toResponseDTO(hostPoint),
+                reviewService.summariesFor(List.of(hostPoint.getId()))));
     }
 
     @GetMapping
     public ResponseEntity<Page<HostPointResponseDTO>> getAll(@PageableDefault(size = 10)Pageable pageable,
                                                              @RequestParam(required = false)HostType type) {
         Page<HostPoint> pageEntity = service.findAllPublic(pageable, type);
-        return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+        return ResponseEntity.ok(withRatings(pageEntity.map(mapper::toResponseDTO)));
     }
 
     @GetMapping("/moderation")
@@ -54,7 +59,18 @@ public class HostPointController implements GenericController {
     public ResponseEntity<Page<HostPointResponseDTO>> getAllForModeration(@PageableDefault(size = 10)Pageable pageable,
                                                                           @RequestParam(required = false)HostType type) {
         Page<HostPoint> pageEntity = service.findAll(pageable, type);
-        return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+        return ResponseEntity.ok(withRatings(pageEntity.map(mapper::toResponseDTO)));
+    }
+
+    private Page<HostPointResponseDTO> withRatings(Page<HostPointResponseDTO> page) {
+        Map<UUID, ReviewService.RatingSummary> summaries =
+                reviewService.summariesFor(page.map(HostPointResponseDTO::id).getContent());
+        return page.map(dto -> withRating(dto, summaries));
+    }
+
+    private HostPointResponseDTO withRating(HostPointResponseDTO dto, Map<UUID, ReviewService.RatingSummary> summaries) {
+        ReviewService.RatingSummary summary = summaries.get(dto.id());
+        return summary == null ? dto : dto.withRating(summary.average(), summary.count());
     }
 
     @PatchMapping("/{id}/approval")

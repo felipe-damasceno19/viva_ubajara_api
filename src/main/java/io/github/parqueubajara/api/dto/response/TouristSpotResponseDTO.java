@@ -13,6 +13,14 @@ public record TouristSpotResponseDTO(
         String webUrl,
         String instagramUrl,
         Boolean active,
-        List<PhotoResponseDTO> photos
+        List<PhotoResponseDTO> photos,
+        Double averageRating,
+        long reviewCount
 ) {
+
+    public TouristSpotResponseDTO withRating(Double averageRating, long reviewCount) {
+        return new TouristSpotResponseDTO(
+                id, name, description, address, phone, email, webUrl, instagramUrl, active, photos,
+                averageRating, reviewCount);
+    }
 }

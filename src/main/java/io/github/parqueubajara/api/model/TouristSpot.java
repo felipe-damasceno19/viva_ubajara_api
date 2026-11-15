@@ -62,6 +62,13 @@ public class TouristSpot extends BaseEntity{
     @OneToMany(mappedBy = "touristSpot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos;
 
+    @Transient
+    public boolean isClaimable() {
+        return owner == null
+                && approvalStatus == ApprovalStatus.APPROVED
+                && Boolean.TRUE.equals(active);
+    }
+
     @PrePersist
     @PreUpdate
     private void preFormat() {
