@@ -8,6 +8,7 @@ import io.github.parqueubajara.api.dto.update.RestaurantUpdateDTO;
 import io.github.parqueubajara.api.mapper.RestaurantMapper;
 import io.github.parqueubajara.api.model.Restaurant;
 import io.github.parqueubajara.api.service.PhotoService;
+import io.github.parqueubajara.api.service.ReviewService;
 import io.github.parqueubajara.api.service.RestaurantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -34,24 +37,37 @@ public class RestaurantController implements GenericController {
     private final RestaurantService service;
     private final RestaurantMapper mapper;
     private final PhotoService photoService;
+    private final ReviewService reviewService;
 
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantResponseDTO> getById(@PathVariable UUID id){
         Restaurant restaurant = service.findByIdPublic(id);
-        return ResponseEntity.ok(mapper.toResponseDTO(restaurant));
+        return ResponseEntity.ok(withRating(mapper.toResponseDTO(restaurant),
+                reviewService.summariesFor(List.of(restaurant.getId()))));
     }
 
     @GetMapping
     public ResponseEntity<Page<RestaurantResponseDTO>> getAll(@PageableDefault(size = 10)Pageable pageable){
         Page<Restaurant> pageEntity = service.findAllPublic(pageable);
-        return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+        return ResponseEntity.ok(withRatings(pageEntity.map(mapper::toResponseDTO)));
     }
 
     @GetMapping("/moderation")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<RestaurantResponseDTO>> getAllForModeration(@PageableDefault(size = 10)Pageable pageable){
         Page<Restaurant> pageEntity = service.findAll(pageable);
-        return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+        return ResponseEntity.ok(withRatings(pageEntity.map(mapper::toResponseDTO)));
+    }
+
+    private Page<RestaurantResponseDTO> withRatings(Page<RestaurantResponseDTO> page) {
+        Map<UUID, ReviewService.RatingSummary> summaries =
+                reviewService.summariesFor(page.map(RestaurantResponseDTO::id).getContent());
+        return page.map(dto -> withRating(dto, summaries));
+    }
+
+    private RestaurantResponseDTO withRating(RestaurantResponseDTO dto, Map<UUID, ReviewService.RatingSummary> summaries) {
+        ReviewService.RatingSummary summary = summaries.get(dto.id());
+        return summary == null ? dto : dto.withRating(summary.average(), summary.count());
     }
 
     @PatchMapping("/{id}/approval")

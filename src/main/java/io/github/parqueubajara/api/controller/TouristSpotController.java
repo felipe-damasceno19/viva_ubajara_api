@@ -7,6 +7,7 @@ import io.github.parqueubajara.api.dto.update.TouristSpotUpdateDTO;
 import io.github.parqueubajara.api.mapper.TouristSpotMapper;
 import io.github.parqueubajara.api.model.TouristSpot;
 import io.github.parqueubajara.api.service.PhotoService;
+import io.github.parqueubajara.api.service.ReviewService;
 import io.github.parqueubajara.api.service.TouristSpotService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -32,11 +35,13 @@ public class TouristSpotController {
     private final TouristSpotService service;
     private final TouristSpotMapper mapper;
     private final PhotoService photoService;
+    private final ReviewService reviewService;
 
     @GetMapping("/{id}")
     public ResponseEntity<TouristSpotResponseDTO> getById(@PathVariable UUID id){
         TouristSpot spot = service.findById(id);
-        return ResponseEntity.ok(mapper.toResponseDTO(spot));
+        return ResponseEntity.ok(withRating(mapper.toResponseDTO(spot),
+                reviewService.summariesFor(List.of(spot.getId()))));
     }
 
     @GetMapping
@@ -45,7 +50,14 @@ public class TouristSpotController {
             @RequestParam(required = false) Boolean active) {
         Page<TouristSpot> pageEntity = service.findAll(pageable, active);
         Page<TouristSpotResponseDTO> pageDTO = pageEntity.map(mapper::toResponseDTO);
-        return ResponseEntity.ok(pageDTO);
+        Map<UUID, ReviewService.RatingSummary> summaries =
+                reviewService.summariesFor(pageDTO.map(TouristSpotResponseDTO::id).getContent());
+        return ResponseEntity.ok(pageDTO.map(dto -> withRating(dto, summaries)));
+    }
+
+    private TouristSpotResponseDTO withRating(TouristSpotResponseDTO dto, Map<UUID, ReviewService.RatingSummary> summaries) {
+        ReviewService.RatingSummary summary = summaries.get(dto.id());
+        return summary == null ? dto : dto.withRating(summary.average(), summary.count());
     }
 
     @PostMapping
