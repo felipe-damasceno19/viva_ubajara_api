@@ -13,6 +13,7 @@ import io.github.parqueubajara.api.dto.update.CompanyEstablishmentUpdateDTO;
 import io.github.parqueubajara.api.dto.update.GastronomyItemUpdateDTO;
 import io.github.parqueubajara.api.dto.update.HostPointUpdateDTO;
 import io.github.parqueubajara.api.dto.update.RestaurantUpdateDTO;
+import io.github.parqueubajara.api.exception.ConflictException;
 import io.github.parqueubajara.api.exception.DuplicateRegistry;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
 import io.github.parqueubajara.api.mapper.HostPointMapper;
@@ -22,7 +23,9 @@ import io.github.parqueubajara.api.model.HostPoint;
 import io.github.parqueubajara.api.model.Restaurant;
 import io.github.parqueubajara.api.model.SystemUser;
 import io.github.parqueubajara.api.model.enums.ApprovalStatus;
+import io.github.parqueubajara.api.model.enums.ClaimStatus;
 import io.github.parqueubajara.api.model.enums.EstablishmentType;
+import io.github.parqueubajara.api.repository.EstablishmentClaimRepository;
 import io.github.parqueubajara.api.repository.GastronomyItemRepository;
 import io.github.parqueubajara.api.repository.HostPointRepository;
 import io.github.parqueubajara.api.repository.RestaurantRepository;
@@ -47,6 +50,7 @@ public class CompanyService {
     private final RestaurantMapper restaurantMapper;
     private final HostPointMapper hostPointMapper;
     private final PhotoService photoService;
+    private final EstablishmentClaimRepository claimRepository;
 
     @Transactional(readOnly = true)
     public CompanyEstablishmentResponseDTO getMyEstablishment(SystemUser user) {
@@ -68,6 +72,10 @@ public class CompanyService {
         if (restaurantRepository.findByOwnerId(user.getId()).isPresent()
                 || hostPointRepository.findByOwnerId(user.getId()).isPresent()) {
             throw new DuplicateRegistry("Você já possui um estabelecimento cadastrado");
+        }
+
+        if (claimRepository.existsByClaimantIdAndStatus(user.getId(), ClaimStatus.PENDING)) {
+            throw new ConflictException("Você tem uma reivindicação em análise; cancele-a para cadastrar um novo estabelecimento");
         }
 
         if (dto.type() == EstablishmentType.RESTAURANT) {

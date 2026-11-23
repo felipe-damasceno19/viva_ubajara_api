@@ -9,6 +9,7 @@ import io.github.parqueubajara.api.model.Attraction;
 import io.github.parqueubajara.api.model.enums.AttractionType;
 import io.github.parqueubajara.api.service.AttractionService;
 import io.github.parqueubajara.api.service.PhotoService;
+import io.github.parqueubajara.api.service.ReviewService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -34,11 +37,13 @@ public class AttractionController implements GenericController{
     private final AttractionService service;
     private final AttractionMapper mapper;
     private final PhotoService photoService;
+    private final ReviewService reviewService;
 
     @GetMapping("/{id}")
     public ResponseEntity<AttractionResponseDTO> getById(@PathVariable UUID id){
         Attraction attraction = service.findById(id);
-        return ResponseEntity.ok(mapper.toResponseDTO(attraction));
+        return ResponseEntity.ok(withRating(mapper.toResponseDTO(attraction),
+                reviewService.summariesFor(List.of(attraction.getId()))));
     }
 
     @GetMapping()
@@ -48,7 +53,18 @@ public class AttractionController implements GenericController{
             @PageableDefault(size = 10, sort = "name") Pageable pageable){
 
         Page<Attraction> pageEntity = service.findAll(pageable, category, active);
-        return ResponseEntity.ok(pageEntity.map(mapper::toResponseDTO));
+        return ResponseEntity.ok(withRatings(pageEntity.map(mapper::toResponseDTO)));
+    }
+
+    private Page<AttractionResponseDTO> withRatings(Page<AttractionResponseDTO> page) {
+        Map<UUID, ReviewService.RatingSummary> summaries =
+                reviewService.summariesFor(page.map(AttractionResponseDTO::id).getContent());
+        return page.map(dto -> withRating(dto, summaries));
+    }
+
+    private AttractionResponseDTO withRating(AttractionResponseDTO dto, Map<UUID, ReviewService.RatingSummary> summaries) {
+        ReviewService.RatingSummary summary = summaries.get(dto.id());
+        return summary == null ? dto : dto.withRating(summary.average(), summary.count());
     }
 
     @PostMapping

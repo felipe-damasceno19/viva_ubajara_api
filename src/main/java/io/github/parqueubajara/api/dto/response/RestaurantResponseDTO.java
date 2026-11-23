@@ -17,11 +17,21 @@ public record RestaurantResponseDTO(
         String mapsUrl,
         Boolean active,
         ApprovalStatus approvalStatus,
+        boolean claimable,
         String cuisineType,
         String openingHours,
         String avgPrice,
         Boolean acceptsReservation,
         Integer starRating,
-        List<PhotoResponseDTO> photos
+        List<PhotoResponseDTO> photos,
+        Double averageRating,
+        long reviewCount
 ) {
+
+    public RestaurantResponseDTO withRating(Double averageRating, long reviewCount) {
+        return new RestaurantResponseDTO(
+                id, name, description, address, phone, email, webUrl, instagramUrl, mapsUrl, active,
+                approvalStatus, claimable, cuisineType, openingHours, avgPrice, acceptsReservation,
+                starRating, photos, averageRating, reviewCount);
+    }
 }

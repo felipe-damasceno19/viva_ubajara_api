@@ -1,6 +1,8 @@
 package io.github.parqueubajara.api.handler;
 
+import io.github.parqueubajara.api.exception.ConflictException;
 import io.github.parqueubajara.api.exception.DuplicateEmailException;
+import io.github.parqueubajara.api.exception.TooManyRequestsException;
 import io.github.parqueubajara.api.exception.DuplicateRegistry;
 import io.github.parqueubajara.api.exception.InvalidFileException;
 import io.github.parqueubajara.api.exception.ResourceNotFoundException;
@@ -137,10 +139,36 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<StandardError> handleConflict(ConflictException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Conflito", ex.getMessage(), request.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<StandardError> handleTooManyRequests(TooManyRequestsException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.TOO_MANY_REQUESTS;
+        return ResponseEntity.status(status).body(
+                new StandardError(LocalDateTime.now(), status.value(),
+                        "Muitas solicitações", ex.getMessage(), request.getRequestURI())
+        );
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<StandardError> handleDataIntegrityViolation(
             DataIntegrityViolationException ex, HttpServletRequest request) {
         String requestUri = request.getRequestURI();
+        if (requestUri.contains("/companies/me/claims") || requestUri.contains("/establishment-claims")) {
+            HttpStatus conflict = HttpStatus.CONFLICT;
+            return ResponseEntity.status(conflict).body(
+                    new StandardError(LocalDateTime.now(), conflict.value(),
+                            "Conflito", "Esta operação conflita com outra solicitação em andamento",
+                            requestUri)
+            );
+        }
         if (!requestUri.endsWith("/auth/activate-company")
                 && !requestUri.endsWith("/auth/register-company")) {
             return handleGeneric(ex, request);
